@@ -170,7 +170,7 @@
 }
 
 /* ========================================================================= */
-/* ACADEMIC PAPER PRINT THEME RULES                                          */
+/* ACADEMIC PAPER PRINT THEME RULES (GIẤY THI HÀN LÂM)                       */
 /* ========================================================================= */
 [data-theme="paper"] {
   color-scheme: light;
@@ -180,19 +180,164 @@
   background-color: #ffffff !important;
 }
 
+[data-theme="paper"] .bg-slate-50,
+[data-theme="paper"] .bg-slate-50\/50,
+[data-theme="paper"] .bg-slate-50\/60,
+[data-theme="paper"] .bg-slate-50\/70,
+[data-theme="paper"] .bg-slate-50\/80,
+[data-theme="paper"] .bg-slate-50\/90,
+[data-theme="paper"] .bg-slate-100,
+[data-theme="paper"] .bg-slate-100\/80,
+[data-theme="paper"] .bg-slate-100\/90 {
+  background-color: #f4efe4 !important;
+}
+
+[data-theme="paper"] .bg-slate-200,
+[data-theme="paper"] .bg-slate-200\/80,
+[data-theme="paper"] .bg-slate-200\/90 {
+  background-color: #eae3d2 !important;
+}
+
 [data-theme="paper"] .border-slate-100,
+[data-theme="paper"] .border-slate-100\/80,
 [data-theme="paper"] .border-slate-200,
+[data-theme="paper"] .border-slate-200\/60,
+[data-theme="paper"] .border-slate-200\/70,
+[data-theme="paper"] .border-slate-200\/80,
 [data-theme="paper"] .border-slate-300 {
   border-color: #dcd4c3 !important;
 }
 
-[data-theme="paper"] .bg-slate-50,
-[data-theme="paper"] .bg-slate-100 {
-  background-color: #f4f0e6 !important;
+/* Paper Theme High-Contrast Ink Text */
+[data-theme="paper"] {
+  color: #1c1917 !important;
+}
+
+[data-theme="paper"] .math-content {
+  color: #1c1917 !important;
+}
+
+[data-theme="paper"] .math-content p,
+[data-theme="paper"] .math-content span:not(.inline-math *),
+[data-theme="paper"] .math-content div,
+[data-theme="paper"] .math-content li,
+[data-theme="paper"] .math-content strong,
+[data-theme="paper"] .math-content em {
+  color: #1c1917 !important;
+}
+
+[data-theme="paper"] .text-slate-900,
+[data-theme="paper"] .text-slate-800,
+[data-theme="paper"] .text-slate-100,
+[data-theme="paper"] .text-slate-200,
+[data-theme="paper"] .text-slate-300 {
+  color: #1c1917 !important;
+}
+
+[data-theme="paper"] .text-slate-700,
+[data-theme="paper"] .text-slate-600 {
+  color: #3f3f46 !important;
+}
+
+[data-theme="paper"] .text-slate-500 {
+  color: #52525b !important;
+}
+
+[data-theme="paper"] .text-slate-400 {
+  color: #71717a !important;
+}
+
+/* Inputs & Form Elements in Paper Mode */
+[data-theme="paper"] input[type="text"],
+[data-theme="paper"] input[type="number"],
+[data-theme="paper"] textarea,
+[data-theme="paper"] select {
+  background-color: #ffffff !important;
+  color: #1c1917 !important;
+  border-color: #dcd4c3 !important;
+}
+
+[data-theme="paper"] input::placeholder,
+[data-theme="paper"] textarea::placeholder {
+  color: #a1a1aa !important;
 }
 
 [data-theme="paper"] .katex {
   color: #1c1917 !important;
+}
+
+/* ========================================================================= */
+/* MODERN LIGHT THEME RULES (SÁNG HIỆN ĐẠI)                                  */
+/* ========================================================================= */
+[data-theme="light"] {
+  color-scheme: light;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .math-content {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .math-content p,
+[data-theme="light"] .math-content span:not(.inline-math *),
+[data-theme="light"] .math-content div,
+[data-theme="light"] .math-content li,
+[data-theme="light"] .math-content strong,
+[data-theme="light"] .math-content em {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .text-slate-900,
+[data-theme="light"] .text-slate-800,
+[data-theme="light"] .text-slate-100,
+[data-theme="light"] .text-slate-200,
+[data-theme="light"] .text-slate-300 {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .text-slate-700 {
+  color: #334155 !important;
+}
+
+[data-theme="light"] .text-slate-600 {
+  color: #475569 !important;
+}
+
+[data-theme="light"] .text-slate-500 {
+  color: #64748b !important;
+}
+
+[data-theme="light"] .text-slate-400 {
+  color: #64748b !important;
+}
+
+[data-theme="light"] .border-slate-200,
+[data-theme="light"] .border-slate-200\/80 {
+  border-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] .bg-slate-200,
+[data-theme="light"] .bg-slate-200\/80,
+[data-theme="light"] .bg-slate-200\/90 {
+  background-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] input[type="text"],
+[data-theme="light"] input[type="number"],
+[data-theme="light"] textarea,
+[data-theme="light"] select {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+[data-theme="light"] .katex {
+  color: #0f172a !important;
 }
 
 .katex-display {

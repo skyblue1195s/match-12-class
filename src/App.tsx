@@ -39,6 +39,18 @@ export default function App() {
     }
   }, [theme]);
 
+  // Sync SEO title based on current active tab
+  useEffect(() => {
+    const titles: Record<string, string> = {
+      practice: 'Toán 12 - Luyện tập Chuyên đề Chuẩn SGK & KaTeX',
+      exam: 'Phòng Thi thử THPT Quốc Gia Môn Toán 90 Phút (Cấu trúc mới)',
+      mistakes: 'Sổ tay Câu hỏi Sai & Luyện tập Điểm yếu - Toán 12',
+      analytics: 'Báo cáo Phân tích Phổ điểm & Năng lực Toán 12',
+      admin: 'Hệ thống Quản trị Ngân hàng Câu hỏi & Đề thi Toán 12',
+    };
+    document.title = titles[activeTab] || 'Toán 12 - Luyện tập & Thi thử THPT Quốc Gia (Cấu trúc mới 2025+)';
+  }, [activeTab]);
+
   // Sync state whenever actions happen
   const refreshData = useCallback(() => {
     setQuestions(storageService.getQuestions());

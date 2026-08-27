@@ -1,0 +1,5 @@
+# robots.txt for Toan 12 THPT QG Platform
+User-agent: *
+Allow: /
+
+Sitemap: https://toan12.edu.vn/sitemap.xml

@@ -66,12 +66,12 @@ export const MathRenderer: React.FC<MathRendererProps> = ({
         });
         
         if (isDisplayMode) {
-          result += `<div class="my-3 overflow-x-auto text-center py-2 px-3 bg-[#0d1527] dark:bg-[#0d1527] rounded-xl border border-slate-700/60 shadow-xs">${rendered}</div>`;
+          result += `<div class="my-3 overflow-x-auto text-center py-2.5 px-3 bg-slate-100/90 dark:bg-[#0d1527] rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-2xs">${rendered}</div>`;
         } else {
           result += `<span class="inline-math px-0.5">${rendered}</span>`;
         }
       } catch (err) {
-        result += `<code class="text-rose-400 bg-rose-950/40 px-1 py-0.5 rounded text-xs">${escapeHtml(rawMatch)}</code>`;
+        result += `<code class="text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 px-1 py-0.5 rounded text-xs">${escapeHtml(rawMatch)}</code>`;
       }
 
       lastIndex = matchStart + rawMatch.length;
@@ -88,7 +88,7 @@ export const MathRenderer: React.FC<MathRendererProps> = ({
   if (inline) {
     return (
       <span
-        className={`math-content inline ${className}`}
+        className={`math-content inline text-inherit ${className}`}
         dangerouslySetInnerHTML={{ __html: html }}
       />
     );
@@ -96,7 +96,7 @@ export const MathRenderer: React.FC<MathRendererProps> = ({
 
   return (
     <div
-      className={`math-content text-slate-200 leading-relaxed ${className}`}
+      className={`math-content text-inherit leading-relaxed ${className}`}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );
@@ -109,10 +109,10 @@ function formatText(text: string): string {
   let escaped = escapeHtml(text);
 
   // Markdown bold: **text** or __text__
-  escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-white">$1</strong>');
+  escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-inherit">$1</strong>');
   
   // Markdown italic: *text* or _text_
-  escaped = escaped.replace(/\*(.*?)\*/g, '<em class="italic text-slate-300">$1</em>');
+  escaped = escaped.replace(/\*(.*?)\*/g, '<em class="italic text-inherit opacity-90">$1</em>');
 
   // Convert bullet lists starting with "- " or "* "
   const lines = escaped.split('\n');
