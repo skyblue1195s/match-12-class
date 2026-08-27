@@ -1,0 +1,6 @@
+{
+  "name": "Toán 12 - Luyện thi & Ôn tập THPT",
+  "description": "Website luyện thi và thực hành Toán 12 theo cấu trúc mới THPT Quốc Gia với KaTeX, lời giải chi tiết và phân tích điểm số.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

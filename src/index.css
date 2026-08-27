@@ -1,0 +1,207 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, .dark, .dark *));
+
+@layer base {
+  :root, [data-theme="dark"], [data-theme="midnight"] {
+    --bg-primary: #090d16;
+    --bg-secondary: #111827;
+    --bg-card: #131d31;
+    --bg-card-hover: #1b2742;
+    --bg-subtle: #0e1524;
+    --border-color: #23314d;
+    --border-subtle: #192338;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent-primary: #6366f1;
+    --accent-primary-hover: #4f46e5;
+    --accent-glow: rgba(99, 102, 241, 0.15);
+    --math-bg: #0f182c;
+    --math-border: #273757;
+    --math-text: #e2e8f0;
+  }
+
+  [data-theme="paper"] {
+    --bg-primary: #f8f6f0;
+    --bg-secondary: #f0ece1;
+    --bg-card: #ffffff;
+    --bg-card-hover: #fcfbf9;
+    --bg-subtle: #f4f0e6;
+    --border-color: #dcd4c3;
+    --border-subtle: #eae3d5;
+    --text-primary: #27272a;
+    --text-secondary: #52525b;
+    --text-muted: #71717a;
+    --accent-primary: #b45309;
+    --accent-primary-hover: #92400e;
+    --accent-glow: rgba(180, 83, 9, 0.1);
+    --math-bg: #f9f7f1;
+    --math-border: #dcd4c3;
+    --math-text: #1c1917;
+  }
+
+  [data-theme="light"] {
+    --bg-primary: #f8fafc;
+    --bg-secondary: #f1f5f9;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f8fafc;
+    --bg-subtle: #f8fafc;
+    --border-color: #e2e8f0;
+    --border-subtle: #f1f5f9;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --accent-primary: #4f46e5;
+    --accent-primary-hover: #4338ca;
+    --accent-glow: rgba(79, 70, 229, 0.1);
+    --math-bg: #eef2ff;
+    --math-border: #e0e7ff;
+    --math-text: #1e1b4b;
+  }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.45);
+}
+
+/* ========================================================================= */
+/* MIDNIGHT SLATE (DARK FOCUS) THEME RULES                                   */
+/* ========================================================================= */
+[data-theme="dark"], [data-theme="midnight"] {
+  color-scheme: dark;
+}
+
+[data-theme="dark"] .bg-white {
+  background-color: #131d31 !important;
+}
+
+[data-theme="dark"] .bg-slate-50,
+[data-theme="dark"] .bg-slate-50\/50,
+[data-theme="dark"] .bg-slate-50\/60,
+[data-theme="dark"] .bg-slate-50\/80 {
+  background-color: #0d1527 !important;
+}
+
+[data-theme="dark"] .bg-slate-100,
+[data-theme="dark"] .bg-slate-100\/80,
+[data-theme="dark"] .bg-slate-100\/90 {
+  background-color: #18243c !important;
+}
+
+[data-theme="dark"] .border-slate-100,
+[data-theme="dark"] .border-slate-100\/80,
+[data-theme="dark"] .border-slate-200,
+[data-theme="dark"] .border-slate-200\/60,
+[data-theme="dark"] .border-slate-200\/70,
+[data-theme="dark"] .border-slate-200\/80,
+[data-theme="dark"] .border-slate-300 {
+  border-color: #23314d !important;
+}
+
+[data-theme="dark"] .text-slate-900,
+[data-theme="dark"] .text-slate-800 {
+  color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] .text-slate-700,
+[data-theme="dark"] .text-slate-600 {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .text-slate-500,
+[data-theme="dark"] .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+/* Subtle indigo glows & pills */
+[data-theme="dark"] .bg-indigo-50,
+[data-theme="dark"] .bg-indigo-50\/40,
+[data-theme="dark"] .bg-indigo-50\/80 {
+  background-color: rgba(99, 102, 241, 0.14) !important;
+  color: #a5b4fc !important;
+}
+
+[data-theme="dark"] .border-indigo-100,
+[data-theme="dark"] .border-indigo-200,
+[data-theme="dark"] .border-indigo-200\/60,
+[data-theme="dark"] .border-indigo-200\/70 {
+  border-color: rgba(99, 102, 241, 0.35) !important;
+}
+
+[data-theme="dark"] .text-indigo-700,
+[data-theme="dark"] .text-indigo-800,
+[data-theme="dark"] .text-indigo-900,
+[data-theme="dark"] .text-indigo-950 {
+  color: #a5b4fc !important;
+}
+
+/* Dark mode inputs */
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="number"],
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  background-color: #0b1120 !important;
+  color: #f1f5f9 !important;
+  border-color: #2b3b5c !important;
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: #64748b !important;
+}
+
+/* KaTeX Dark Overrides */
+[data-theme="dark"] .katex, 
+[data-theme="midnight"] .katex {
+  color: #f1f5f9 !important;
+}
+
+/* ========================================================================= */
+/* ACADEMIC PAPER PRINT THEME RULES                                          */
+/* ========================================================================= */
+[data-theme="paper"] {
+  color-scheme: light;
+}
+
+[data-theme="paper"] .bg-white {
+  background-color: #ffffff !important;
+}
+
+[data-theme="paper"] .border-slate-100,
+[data-theme="paper"] .border-slate-200,
+[data-theme="paper"] .border-slate-300 {
+  border-color: #dcd4c3 !important;
+}
+
+[data-theme="paper"] .bg-slate-50,
+[data-theme="paper"] .bg-slate-100 {
+  background-color: #f4f0e6 !important;
+}
+
+[data-theme="paper"] .katex {
+  color: #1c1917 !important;
+}
+
+.katex-display {
+  margin: 0.5em 0 !important;
+}
+
+/* Eye-friendly focus ring */
+*:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
