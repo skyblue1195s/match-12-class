@@ -36,7 +36,7 @@ function getGeminiClient(): GoogleGenAI | null {
 }
 
 // Helper to execute Gemini generation with multi-model fallback and retry logic
-const CANDIDATE_MODELS = ['gemini-2.5-flash', 'gemini-3.7-flash', 'gemini-2.5-pro'];
+const CANDIDATE_MODELS = ['gemini-3.7-flash', 'gemini-3.1-flash-lite'];
 
 async function generateWithModelFallback(ai: GoogleGenAI, prompt: string): Promise<string | null> {
   for (const model of CANDIDATE_MODELS) {
