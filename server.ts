@@ -36,24 +36,39 @@ function getGeminiClient(): GoogleGenAI | null {
 }
 
 // Helper to execute Gemini generation with multi-model fallback and retry logic
-const CANDIDATE_MODELS = ['gemini-3.7-flash', 'gemini-3.1-flash-lite'];
+const CANDIDATE_MODELS = ['gemini-3.7-flash', 'gemini-3.1-flash-lite', 'gemini-flash-latest'];
 
 async function generateWithModelFallback(ai: GoogleGenAI, prompt: string): Promise<string | null> {
   for (const model of CANDIDATE_MODELS) {
-    try {
-      const response = await ai.models.generateContent({
-        model,
-        contents: prompt,
-      });
-      if (response && response.text) {
-        return response.text;
-      }
-    } catch (err: any) {
-      const errorMsg = err?.message || String(err);
-      console.warn(`Model ${model} attempt failed (${errorMsg}), trying next fallback...`);
-      // If 503/429, wait 300ms before trying next model
-      if (errorMsg.includes('503') || errorMsg.includes('429') || errorMsg.includes('high demand') || errorMsg.includes('UNAVAILABLE')) {
-        await new Promise((resolve) => setTimeout(resolve, 300));
+    const maxRetries = 2;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const response = await ai.models.generateContent({
+          model,
+          contents: prompt,
+        });
+        if (response && response.text) {
+          return response.text;
+        }
+      } catch (err: any) {
+        const errorMsg = err?.message || String(err);
+        const isTransient =
+          errorMsg.includes('503') ||
+          errorMsg.includes('429') ||
+          errorMsg.includes('high demand') ||
+          errorMsg.includes('UNAVAILABLE') ||
+          errorMsg.includes('RESOURCE_EXHAUSTED') ||
+          errorMsg.includes('Overloaded');
+
+        if (attempt < maxRetries && isTransient) {
+          // Exponential backoff with small jitter
+          const backoffTime = attempt * 500 + Math.floor(Math.random() * 200);
+          console.warn(`Model ${model} attempt ${attempt} encountered transient issue (${errorMsg}). Retrying in ${backoffTime}ms...`);
+          await new Promise((resolve) => setTimeout(resolve, backoffTime));
+        } else {
+          console.warn(`Model ${model} failed on attempt ${attempt} (${errorMsg}), trying next model fallback...`);
+          break;
+        }
       }
     }
   }
