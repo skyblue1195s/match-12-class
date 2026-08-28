@@ -112,3 +112,46 @@ export interface WrongQuestionRecord {
   level: DifficultyLevel;
   lastUserAnswer: any;
 }
+
+export interface AchievementBadge {
+  id: string;
+  title: string;
+  description: string;
+  icon: string; // Emoji or SVG icon identifier
+  streakRequired?: number;
+  correctRequired?: number;
+  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+}
+
+export interface MasteryRankInfo {
+  level: number; // 1 to 5
+  title: string;
+  icon: string;
+  minCorrect: number;
+  nextLevelMin?: number;
+  color: string;
+  badgeBg: string;
+}
+
+export interface UserAchievementStats {
+  currentStreak: number;
+  maxStreak: number;
+  totalCorrect: number;
+  totalAnswered: number;
+  masteryLevel: number;
+  unlockedBadgeIds: string[];
+  lastAnsweredAt?: string;
+}
+
+export interface StreakMilestoneEvent {
+  id: string;
+  type: 'streak' | 'mastery_levelup' | 'badge_unlocked';
+  streakCount?: number;
+  title: string;
+  subtitle: string;
+  icon: string;
+  rarity?: 'common' | 'rare' | 'epic' | 'legendary';
+  level?: number;
+  badgeId?: string;
+  timestamp: number;
+}

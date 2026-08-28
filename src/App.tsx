@@ -5,12 +5,22 @@ import ExamView from './components/ExamView';
 import MistakesView from './components/MistakesView';
 import AnalyticsView from './components/AnalyticsView';
 import AdminQuestionManager from './components/AdminQuestionManager';
+import { AchievementProvider } from './context/AchievementContext';
+import { AchievementNotification } from './components/AchievementNotification';
 import { storageService } from './services/storageService';
 import { Topic, Question, Exam, Attempt, UserProfile } from './types/math';
 
 export type AppTheme = 'dark' | 'paper' | 'light';
 
 export default function App() {
+  return (
+    <AchievementProvider>
+      <MainApp />
+    </AchievementProvider>
+  );
+}
+
+function MainApp() {
   const [activeTab, setActiveTab] = useState<'practice' | 'exam' | 'mistakes' | 'analytics' | 'admin'>('practice');
   const [theme, setTheme] = useState<AppTheme>(() => {
     return (localStorage.getItem('app_theme') as AppTheme) || 'dark';
@@ -106,6 +116,9 @@ export default function App() {
 
       {/* Main Content Area */}
       <main className="flex-1 pb-16 relative z-10">
+        {/* Floating Achievement Notification */}
+        <AchievementNotification />
+
         {activeTab === 'practice' && (
           <PracticeView
             topics={topics}

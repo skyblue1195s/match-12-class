@@ -25,6 +25,7 @@ import { DIFFICULTY_LABELS, QUESTION_TYPE_LABELS } from '../data/mockData';
 import MathRenderer from './MathRenderer';
 import { gradeSingleQuestion } from '../services/gradingService';
 import { storageService } from '../services/storageService';
+import { useAchievements } from '../context/AchievementContext';
 
 interface SpeedDrillModalProps {
   isOpen: boolean;
@@ -45,6 +46,8 @@ export const SpeedDrillModal: React.FC<SpeedDrillModalProps> = ({
   currentTopicId,
   onMistakeRecorded
 }) => {
+  const { recordAnswer, stats: achievementStats } = useAchievements();
+
   // Configuration states
   const [drillTopicScope, setDrillTopicScope] = useState<'current' | 'all' | string>(currentTopicId || 'current');
   const [questionCount, setQuestionCount] = useState<number>(10);
@@ -124,6 +127,22 @@ export const SpeedDrillModal: React.FC<SpeedDrillModalProps> = ({
 
     questionStartTimeRef.current = Date.now();
   };
+
+  // Confirmation before leaving/reloading page during active speed drill
+  useEffect(() => {
+    if (stage !== 'running') return;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = 'Bạn đang trong quá trình luyện tập cấp tốc. Nếu tải lại trang hoặc đóng tab, tiến độ làm bài sẽ bị hủy!';
+      return e.returnValue;
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [stage]);
 
   // Timer loop during running state
   useEffect(() => {
@@ -218,6 +237,11 @@ export const SpeedDrillModal: React.FC<SpeedDrillModalProps> = ({
 
     setGradedResults(results);
     setStage('summary');
+
+    // Update achievement stats for all drill questions
+    results.forEach(r => {
+      recordAnswer(r.isCorrect);
+    });
 
     // Save attempt in storage
     const totalScore = results.reduce((sum, r) => sum + r.scoreEarned, 0);

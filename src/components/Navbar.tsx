@@ -10,6 +10,7 @@ import {
   Scroll,
   ChevronDown
 } from 'lucide-react';
+import { StreakMasteryPill } from './StreakMasteryPill';
 import { UserProfile } from '../types/math';
 import { AppTheme } from '../App';
 
@@ -205,6 +206,9 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* User Profile, Theme Switcher & Role */}
           <div className="flex items-center gap-2 sm:gap-2.5">
             
+            {/* Streak & Mastery Achievement Pill */}
+            <StreakMasteryPill />
+
             {/* Theme Switcher Dropdown */}
             <div className="relative">
               <button

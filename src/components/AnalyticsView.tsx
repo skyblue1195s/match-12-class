@@ -12,10 +12,16 @@ import {
   Bot,
   Loader2,
   ChevronRight,
-  BookOpen
+  BookOpen,
+  Flame,
+  Zap,
+  Lock,
+  Trophy
 } from 'lucide-react';
 import { Attempt, Topic, Question, UserProfile } from '../types/math';
 import { DIFFICULTY_LABELS } from '../data/mockData';
+import { useAchievements } from '../context/AchievementContext';
+import { ACHIEVEMENT_BADGES, MASTERY_RANKS } from '../services/storageService';
 import MathRenderer from './MathRenderer';
 
 interface AnalyticsViewProps {
@@ -31,6 +37,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
   questions,
   user,
 }) => {
+  const { stats: userStats, masteryRank } = useAchievements();
   const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
   const [loadingAi, setLoadingAi] = useState<boolean>(false);
 
@@ -369,6 +376,83 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                 </>
               )}
             </button>
+          </div>
+
+          {/* Achievement & Streak Mastery Card */}
+          <div className="bg-white dark:bg-[#131d31] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-2xs space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-extrabold text-sm text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                <div className="w-7 h-7 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800/60 flex items-center justify-center text-amber-600">
+                  <Trophy className="w-4 h-4" />
+                </div>
+                <span>Thành tựu &amp; Cấp độ</span>
+              </h3>
+              <span className="text-[11px] font-mono font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-lg border border-amber-200/80 dark:border-amber-800/50">
+                Lv.{userStats.masteryLevel} {masteryRank.title}
+              </span>
+            </div>
+
+            {/* Streak & Best Streak Indicators */}
+            <div className="grid grid-cols-2 gap-2.5">
+              <div className="p-3 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-800/50 text-center">
+                <div className="flex items-center justify-center gap-1 text-amber-600 dark:text-amber-400 text-xs font-bold">
+                  <Flame className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+                  <span>Chuỗi hiện tại</span>
+                </div>
+                <div className="text-xl font-black font-mono text-amber-700 dark:text-amber-300 mt-1">
+                  {userStats.currentStreak} <span className="text-xs font-normal">câu</span>
+                </div>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200/80 dark:border-indigo-800/50 text-center">
+                <div className="flex items-center justify-center gap-1 text-indigo-600 dark:text-indigo-400 text-xs font-bold">
+                  <Zap className="w-3.5 h-3.5 fill-indigo-500 text-indigo-500" />
+                  <span>Kỷ lục chuỗi</span>
+                </div>
+                <div className="text-xl font-black font-mono text-indigo-700 dark:text-indigo-300 mt-1">
+                  {userStats.bestStreak} <span className="text-xs font-normal">câu</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Badges Collection Grid */}
+            <div className="space-y-2 pt-1 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-bold text-slate-700 dark:text-slate-300">Huy hiệu đã mở khóa</span>
+                <span className="font-mono text-slate-400 text-[11px] font-bold">
+                  {userStats.unlockedBadges.length} / {ACHIEVEMENT_BADGES.length}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                {ACHIEVEMENT_BADGES.map((badge) => {
+                  const isUnlocked = userStats.unlockedBadges.includes(badge.id);
+                  return (
+                    <div
+                      key={badge.id}
+                      className={`p-2.5 rounded-2xl border transition-all flex items-start gap-2 ${
+                        isUnlocked
+                          ? 'bg-amber-50/60 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800/60 text-slate-800 dark:text-slate-200 shadow-2xs'
+                          : 'bg-slate-50/50 dark:bg-slate-900/40 border-slate-200/60 dark:border-slate-800/60 opacity-50'
+                      }`}
+                      title={badge.description}
+                    >
+                      <div className="text-lg shrink-0 mt-0.5">
+                        {isUnlocked ? badge.icon : <Lock className="w-4 h-4 text-slate-400 mt-1" />}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[11px] font-bold truncate leading-tight">
+                          {badge.title}
+                        </p>
+                        <p className="text-[9px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2 leading-snug">
+                          {badge.description}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
           {/* AI Plan Output Display */}

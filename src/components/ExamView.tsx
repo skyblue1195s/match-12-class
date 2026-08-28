@@ -78,6 +78,23 @@ export const ExamView: React.FC<ExamViewProps> = ({
 
   const activeQuestion: Question | undefined = examQuestions[currentExamIndex];
 
+  // Confirmation before leaving/reloading page during active exam
+  useEffect(() => {
+    if (!isExamActive || isSubmitted) return;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      // Setting returnValue triggers native browser confirmation dialog on tab close / page reload
+      e.returnValue = 'Bạn đang trong quá trình làm bài thi. Nếu tải lại trang hoặc đóng tab, toàn bộ kết quả bài làm chưa nộp sẽ bị mất!';
+      return e.returnValue;
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isExamActive, isSubmitted]);
+
   // Timer interval
   useEffect(() => {
     let timer: any = null;

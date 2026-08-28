@@ -17,6 +17,7 @@ import { DIFFICULTY_LABELS, QUESTION_TYPE_LABELS } from '../data/mockData';
 import MathRenderer from './MathRenderer';
 import { storageService } from '../services/storageService';
 import { gradeSingleQuestion } from '../services/gradingService';
+import { useAchievements } from '../context/AchievementContext';
 import AiTutorModal from './AiTutorModal';
 
 interface MistakesViewProps {
@@ -30,6 +31,7 @@ export const MistakesView: React.FC<MistakesViewProps> = ({
   topics,
   onMistakesUpdated,
 }) => {
+  const { recordAnswer, stats: achievementStats } = useAchievements();
   const [mistakesMap, setMistakesMap] = useState<Record<string, WrongQuestionRecord>>(() => storageService.getMistakes());
   const [selectedTopicId, setSelectedTopicId] = useState<string>('all');
   
@@ -89,6 +91,9 @@ export const MistakesView: React.FC<MistakesViewProps> = ({
     setIsChecked(true);
     setIsCorrect(graded.isCorrect);
     setShowExplanation(true);
+
+    // Record achievement & streak progress
+    recordAnswer(graded.isCorrect);
 
     if (graded.isCorrect) {
       storageService.removeMistake(activeQuestion.id);

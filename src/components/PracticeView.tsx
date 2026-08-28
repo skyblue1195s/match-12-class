@@ -20,7 +20,8 @@ import {
   AlertCircle,
   LayoutGrid,
   X,
-  Zap
+  Zap,
+  Flame
 } from 'lucide-react';
 import { Topic, Question, DifficultyLevel, QuestionType, UserAnswer } from '../types/math';
 import { DIFFICULTY_LABELS, QUESTION_TYPE_LABELS } from '../data/mockData';
@@ -29,6 +30,7 @@ import AiTutorModal from './AiTutorModal';
 import SpeedDrillModal from './SpeedDrillModal';
 import { gradeSingleQuestion } from '../services/gradingService';
 import { storageService } from '../services/storageService';
+import { useAchievements } from '../context/AchievementContext';
 
 interface PracticeViewProps {
   topics: Topic[];
@@ -45,6 +47,9 @@ export const PracticeView: React.FC<PracticeViewProps> = ({
   const [selectedLevel, setSelectedLevel] = useState<string>('all');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+
+  // Achievement context
+  const { recordAnswer, stats: achievementStats } = useAchievements();
 
   // Ensure selected topic is valid when topics change
   React.useEffect(() => {
@@ -144,6 +149,9 @@ export const PracticeView: React.FC<PracticeViewProps> = ({
     setGradingResult(graded);
     setIsChecked(true);
     setShowExplanation(true);
+
+    // Record achievement & streak progress
+    recordAnswer(graded.isCorrect);
 
     // Save as a practice attempt in storage
     const user = storageService.getUser();
@@ -262,7 +270,7 @@ export const PracticeView: React.FC<PracticeViewProps> = ({
                 onClick={() => handleTopicChange(t.id)}
                 className={`w-[240px] sm:w-[260px] shrink-0 snap-start p-4 rounded-2xl border text-left transition-all relative flex flex-col justify-between group cursor-pointer ${
                   isSelected
-                    ? 'border-indigo-600 bg-gradient-to-b from-indigo-50/80 to-white shadow-sm ring-2 ring-indigo-500/20'
+                    ? 'border-indigo-600 bg-indigo-50/80 text-indigo-950 ring-2 ring-indigo-500/20 shadow-sm'
                     : 'border-slate-200/80 bg-white hover:border-indigo-300 hover:bg-slate-50/60 shadow-2xs'
                 }`}
               >
@@ -275,7 +283,9 @@ export const PracticeView: React.FC<PracticeViewProps> = ({
                     </span>
                     <span className="text-[11px] text-slate-400 font-bold font-mono">{count} câu</span>
                   </div>
-                  <h3 className="font-bold text-xs text-slate-900 line-clamp-2 leading-snug group-hover:text-indigo-600 transition-colors">
+                  <h3 className={`font-bold text-xs line-clamp-2 leading-snug transition-colors ${
+                    isSelected ? 'text-slate-900 font-extrabold' : 'text-slate-900 group-hover:text-indigo-600'
+                  }`}>
                     {t.name.replace(/^\d+\.\s*/, '')}
                   </h3>
                 </div>
@@ -639,22 +649,30 @@ export const PracticeView: React.FC<PracticeViewProps> = ({
             {isChecked && (
               <div className="mt-6 space-y-4 animate-in fade-in duration-200">
                 {/* Result Notification Banner */}
-                <div className={`p-4 rounded-xl border flex items-center justify-between ${
+                <div className={`p-4 rounded-xl border flex flex-wrap items-center justify-between gap-3 ${
                   gradingResult?.isCorrect
                     ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
                     : 'bg-amber-50 border-amber-200 text-amber-900'
                 }`}>
                   <div className="flex items-center gap-3">
                     {gradingResult?.isCorrect ? (
-                      <CheckCircle2 className="w-6 h-6 text-emerald-600" />
+                      <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0" />
                     ) : (
-                      <AlertCircle className="w-6 h-6 text-amber-600" />
+                      <AlertCircle className="w-6 h-6 text-amber-600 shrink-0" />
                     )}
                     <div>
-                      <p className="font-bold text-sm">
-                        {gradingResult?.isCorrect ? 'Chính xác! Làm rất tốt.' : 'Chưa chính xác hoặc còn thiếu sót.'}
-                      </p>
-                      <p className="text-xs opacity-90">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-bold text-sm">
+                          {gradingResult?.isCorrect ? 'Chính xác! Làm rất tốt.' : 'Chưa chính xác hoặc còn thiếu sót.'}
+                        </p>
+                        {gradingResult?.isCorrect && achievementStats.currentStreak > 1 && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-black bg-amber-500 text-white shadow-2xs font-mono animate-bounce">
+                            <Flame className="w-3 h-3 fill-white" />
+                            Chuỗi {achievementStats.currentStreak}x
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs opacity-90 mt-0.5">
                         Điểm đạt được: <strong className="font-mono">{gradingResult?.scoreEarned} / {gradingResult?.maxScore}</strong> điểm
                       </p>
                     </div>
@@ -662,7 +680,7 @@ export const PracticeView: React.FC<PracticeViewProps> = ({
 
                   <button
                     onClick={handleResetCurrent}
-                    className="flex items-center gap-1 px-3 py-1.5 bg-white border border-slate-200 text-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-50 transition-colors"
+                    className="flex items-center gap-1 px-3 py-1.5 bg-white border border-slate-200 text-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-50 transition-colors cursor-pointer"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
                     <span>Làm lại câu này</span>

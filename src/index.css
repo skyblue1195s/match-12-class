@@ -129,9 +129,12 @@
 /* Subtle indigo glows & pills */
 [data-theme="dark"] .bg-indigo-50,
 [data-theme="dark"] .bg-indigo-50\/40,
-[data-theme="dark"] .bg-indigo-50\/80 {
-  background-color: rgba(99, 102, 241, 0.14) !important;
-  color: #a5b4fc !important;
+[data-theme="dark"] .bg-indigo-50\/60,
+[data-theme="dark"] .bg-indigo-50\/70,
+[data-theme="dark"] .bg-indigo-50\/80,
+[data-theme="dark"] .bg-indigo-50\/90 {
+  background-color: rgba(99, 102, 241, 0.16) !important;
+  color: #c7d2fe !important;
 }
 
 [data-theme="dark"] .border-indigo-100,
@@ -139,6 +142,14 @@
 [data-theme="dark"] .border-indigo-200\/60,
 [data-theme="dark"] .border-indigo-200\/70 {
   border-color: rgba(99, 102, 241, 0.35) !important;
+}
+
+[data-theme="dark"] .border-indigo-600 {
+  border-color: #6366f1 !important;
+}
+
+[data-theme="dark"] .ring-indigo-500\/20 {
+  --tw-ring-color: rgba(99, 102, 241, 0.35) !important;
 }
 
 [data-theme="dark"] .text-indigo-700,
