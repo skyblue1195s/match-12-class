@@ -101,6 +101,17 @@
   background-color: #18243c !important;
 }
 
+[data-theme="dark"] .bg-slate-200,
+[data-theme="dark"] .bg-slate-200\/80,
+[data-theme="dark"] .bg-slate-200\/90 {
+  background-color: #202f4e !important;
+}
+
+[data-theme="dark"] .bg-slate-300,
+[data-theme="dark"] .bg-slate-300\/80 {
+  background-color: #2a3d66 !important;
+}
+
 [data-theme="dark"] .border-slate-100,
 [data-theme="dark"] .border-slate-100\/80,
 [data-theme="dark"] .border-slate-200,
@@ -135,6 +146,35 @@
 [data-theme="dark"] .bg-indigo-50\/90 {
   background-color: rgba(99, 102, 241, 0.16) !important;
   color: #c7d2fe !important;
+}
+
+/* Dark Mode Hover states */
+[data-theme="dark"] .hover\:bg-slate-50:hover,
+[data-theme="dark"] .hover\:bg-slate-50\/40:hover,
+[data-theme="dark"] .hover\:bg-slate-50\/50:hover,
+[data-theme="dark"] .hover\:bg-slate-50\/60:hover,
+[data-theme="dark"] .hover\:bg-slate-50\/70:hover,
+[data-theme="dark"] .hover\:bg-slate-50\/80:hover {
+  background-color: #1a2742 !important;
+}
+
+[data-theme="dark"] .hover\:bg-slate-100:hover,
+[data-theme="dark"] .hover\:bg-slate-100\/80:hover {
+  background-color: #202f4e !important;
+}
+
+[data-theme="dark"] .hover\:bg-slate-200:hover,
+[data-theme="dark"] .hover\:bg-slate-200\/80:hover {
+  background-color: #2a3d66 !important;
+}
+
+[data-theme="dark"] .hover\:bg-indigo-50:hover,
+[data-theme="dark"] .hover\:bg-indigo-50\/60:hover {
+  background-color: rgba(99, 102, 241, 0.22) !important;
+}
+
+[data-theme="dark"] .hover\:bg-rose-50:hover {
+  background-color: rgba(244, 63, 94, 0.2) !important;
 }
 
 [data-theme="dark"] .border-indigo-100,
@@ -207,6 +247,29 @@
 [data-theme="paper"] .bg-slate-200\/80,
 [data-theme="paper"] .bg-slate-200\/90 {
   background-color: #eae3d2 !important;
+}
+
+[data-theme="paper"] .hover\:bg-slate-50:hover,
+[data-theme="paper"] .hover\:bg-slate-50\/40:hover,
+[data-theme="paper"] .hover\:bg-slate-50\/50:hover,
+[data-theme="paper"] .hover\:bg-slate-50\/60:hover,
+[data-theme="paper"] .hover\:bg-slate-50\/70:hover,
+[data-theme="paper"] .hover\:bg-slate-50\/80:hover {
+  background-color: #eee7d8 !important;
+}
+
+[data-theme="paper"] .hover\:bg-slate-100:hover,
+[data-theme="paper"] .hover\:bg-slate-100\/80:hover {
+  background-color: #e5ddca !important;
+}
+
+[data-theme="paper"] .hover\:bg-slate-200:hover,
+[data-theme="paper"] .hover\:bg-slate-200\/80:hover {
+  background-color: #dfd6c1 !important;
+}
+
+[data-theme="paper"] .hover\:bg-slate-300:hover {
+  background-color: #d5cbb4 !important;
 }
 
 [data-theme="paper"] .border-slate-100,

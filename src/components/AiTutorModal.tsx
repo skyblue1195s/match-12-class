@@ -104,48 +104,48 @@ export const AiTutorModal: React.FC<AiTutorModalProps> = ({
             <button
               onClick={() => fetchAiExplanation('hint')}
               disabled={loading}
-              className={`p-3 rounded-xl border text-xs font-medium flex flex-col items-center gap-1.5 transition-all text-center ${
+              className={`p-3 rounded-xl border text-xs font-medium flex flex-col items-center gap-1.5 transition-all text-center cursor-pointer ${
                 mode === 'hint'
-                  ? 'border-indigo-600 bg-indigo-50/80 text-indigo-900 shadow-xs'
-                  : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                  ? 'border-indigo-600 bg-indigo-50/90 text-indigo-950 font-bold shadow-xs'
+                  : 'border-slate-200/80 bg-white text-slate-700 hover:bg-slate-50'
               }`}
             >
               <Lightbulb className={`w-4 h-4 ${mode === 'hint' ? 'text-indigo-600' : 'text-slate-400'}`} />
-              <span>Gợi ý tư duy</span>
+              <span className="font-bold">Gợi ý tư duy</span>
               <span className="text-[10px] text-slate-400 font-normal">Không lộ đáp án</span>
             </button>
 
             <button
               onClick={() => fetchAiExplanation('full_step_by_step')}
               disabled={loading}
-              className={`p-3 rounded-xl border text-xs font-medium flex flex-col items-center gap-1.5 transition-all text-center ${
+              className={`p-3 rounded-xl border text-xs font-medium flex flex-col items-center gap-1.5 transition-all text-center cursor-pointer ${
                 mode === 'full_step_by_step'
-                  ? 'border-indigo-600 bg-indigo-50/80 text-indigo-900 shadow-xs'
-                  : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                  ? 'border-indigo-600 bg-indigo-50/90 text-indigo-950 font-bold shadow-xs'
+                  : 'border-slate-200/80 bg-white text-slate-700 hover:bg-slate-50'
               }`}
             >
               <Bot className={`w-4 h-4 ${mode === 'full_step_by_step' ? 'text-indigo-600' : 'text-slate-400'}`} />
-              <span>Giải thích chi tiết</span>
+              <span className="font-bold">Giải thích chi tiết</span>
               <span className="text-[10px] text-slate-400 font-normal">Từng bước bản chất</span>
             </button>
 
             <button
               onClick={() => fetchAiExplanation('alternative_method')}
               disabled={loading}
-              className={`p-3 rounded-xl border text-xs font-medium flex flex-col items-center gap-1.5 transition-all text-center ${
+              className={`p-3 rounded-xl border text-xs font-medium flex flex-col items-center gap-1.5 transition-all text-center cursor-pointer ${
                 mode === 'alternative_method'
-                  ? 'border-indigo-600 bg-indigo-50/80 text-indigo-900 shadow-xs'
-                  : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                  ? 'border-indigo-600 bg-indigo-50/90 text-indigo-950 font-bold shadow-xs'
+                  : 'border-slate-200/80 bg-white text-slate-700 hover:bg-slate-50'
               }`}
             >
               <Calculator className={`w-4 h-4 ${mode === 'alternative_method' ? 'text-indigo-600' : 'text-slate-400'}`} />
-              <span>Cách giải khác / Casio</span>
+              <span className="font-bold">Cách giải khác / Casio</span>
               <span className="text-[10px] text-slate-400 font-normal">Mẹo &amp; Tối ưu</span>
             </button>
           </div>
 
           {/* AI Output Area */}
-          <div className="min-h-[140px] rounded-xl border border-slate-200 bg-white p-4">
+          <div className="min-h-[140px] rounded-xl border border-slate-200/80 bg-white p-4">
             {loading ? (
               <div className="h-32 flex flex-col items-center justify-center text-slate-400 gap-2">
                 <Loader2 className="w-6 h-6 animate-spin text-indigo-600" />
@@ -158,7 +158,7 @@ export const AiTutorModal: React.FC<AiTutorModalProps> = ({
                 </div>
                 <button
                   onClick={() => fetchAiExplanation(mode)}
-                  className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer shrink-0"
+                  className="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer shrink-0"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Thử lại</span>
@@ -178,11 +178,11 @@ export const AiTutorModal: React.FC<AiTutorModalProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="px-6 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-between text-xs text-slate-500">
+        <div className="px-6 py-3.5 border-t border-slate-200/80 bg-slate-50 flex items-center justify-between text-xs text-slate-500">
           <span>Công thức toán học định dạng KaTeX chuẩn THPT</span>
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 font-medium rounded-lg transition-colors"
+            className="px-5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 font-bold rounded-xl transition-all cursor-pointer shadow-2xs"
           >
             Đóng
           </button>

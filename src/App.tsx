@@ -31,6 +31,14 @@ function MainApp() {
   const [exams, setExams] = useState<Exam[]>(() => storageService.getExams());
   const [attempts, setAttempts] = useState<Attempt[]>(() => storageService.getAttempts());
   const [mistakesCount, setMistakesCount] = useState<number>(() => Object.keys(storageService.getMistakes()).length);
+  const [isFocusMode, setIsFocusMode] = useState<boolean>(false);
+
+  // Reset focus mode if user switches away from exam tab
+  useEffect(() => {
+    if (activeTab !== 'exam') {
+      setIsFocusMode(false);
+    }
+  }, [activeTab]);
 
   // Sync theme to DOM and localStorage
   useEffect(() => {
@@ -100,22 +108,24 @@ function MainApp() {
         <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:24px_24px] opacity-60 z-0"></div>
       )}
 
-      {/* Top Navigation Header */}
-      <div className="relative z-20">
-        <Navbar
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          theme={theme}
-          setTheme={setTheme}
-          user={user}
-          setUser={handleUserUpdate}
-          mistakesCount={mistakesCount}
-          onResetData={handleResetData}
-        />
-      </div>
+      {/* Top Navigation Header (Hidden in Focus Mode) */}
+      {!isFocusMode && (
+        <div className="relative z-20 animate-in fade-in duration-200">
+          <Navbar
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            theme={theme}
+            setTheme={setTheme}
+            user={user}
+            setUser={handleUserUpdate}
+            mistakesCount={mistakesCount}
+            onResetData={handleResetData}
+          />
+        </div>
+      )}
 
       {/* Main Content Area */}
-      <main className="flex-1 pb-16 relative z-10">
+      <main className={`flex-1 relative z-10 transition-all duration-300 ${isFocusMode ? 'py-3' : 'pb-16'}`}>
         {/* Floating Achievement Notification */}
         <AchievementNotification />
 
@@ -132,6 +142,11 @@ function MainApp() {
             exams={exams}
             questions={questions}
             onExamCompleted={refreshData}
+            isFocusMode={isFocusMode}
+            onToggleFocusMode={setIsFocusMode}
+            onExamActiveChange={(isActive) => {
+              if (!isActive) setIsFocusMode(false);
+            }}
           />
         )}
 
@@ -162,28 +177,30 @@ function MainApp() {
         )}
       </main>
 
-      {/* Bento Footer */}
-      <footer className={`border-t py-8 text-center text-xs relative z-10 transition-colors ${
-        theme === 'dark'
-          ? 'bg-[#0c1322]/90 backdrop-blur-md border-slate-800 text-slate-400'
-          : theme === 'paper'
-          ? 'bg-[#f0ece1]/90 backdrop-blur-md border-[#dcd4c3] text-zinc-600'
-          : 'bg-white/80 backdrop-blur-md border-slate-200/80 text-slate-500'
-      }`}>
-        <div className="max-w-7xl mx-auto px-4 space-y-2">
-          <div className="flex items-center justify-center gap-2">
-            <span className="w-5 h-5 rounded-lg bg-indigo-600 text-white font-mono font-extrabold text-[10px] flex items-center justify-center shadow-xs">
-              ∑
-            </span>
-            <span className={`font-extrabold tracking-tight ${theme === 'dark' ? 'text-slate-200' : 'text-slate-800'}`}>
-              Toán 12 - Luyện Thi &amp; Thi Thử THPT Quốc Gia
-            </span>
+      {/* Bento Footer (Hidden in Focus Mode) */}
+      {!isFocusMode && (
+        <footer className={`border-t py-8 text-center text-xs relative z-10 transition-colors animate-in fade-in duration-200 ${
+          theme === 'dark'
+            ? 'bg-[#0c1322]/90 backdrop-blur-md border-slate-800 text-slate-400'
+            : theme === 'paper'
+            ? 'bg-[#f0ece1]/90 backdrop-blur-md border-[#dcd4c3] text-zinc-600'
+            : 'bg-white/80 backdrop-blur-md border-slate-200/80 text-slate-500'
+        }`}>
+          <div className="max-w-7xl mx-auto px-4 space-y-2">
+            <div className="flex items-center justify-center gap-2">
+              <span className="w-5 h-5 rounded-lg bg-indigo-600 text-white font-mono font-extrabold text-[10px] flex items-center justify-center shadow-xs">
+                ∑
+              </span>
+              <span className={`font-extrabold tracking-tight ${theme === 'dark' ? 'text-slate-200' : 'text-slate-800'}`}>
+                Toán 12 - Luyện Thi &amp; Thi Thử THPT Quốc Gia
+              </span>
+            </div>
+            <p className={`max-w-xl mx-auto text-[11px] leading-relaxed ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
+              Dự án giáo dục phi lợi nhuận hỗ trợ học sinh ôn luyện Toán 12 theo chuẩn ma trận và cấu trúc 3 phần mới của Bộ Giáo dục &amp; Đào tạo.
+            </p>
           </div>
-          <p className={`max-w-xl mx-auto text-[11px] leading-relaxed ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
-            Dự án giáo dục phi lợi nhuận hỗ trợ học sinh ôn luyện Toán 12 theo chuẩn ma trận và cấu trúc 3 phần mới của Bộ Giáo dục &amp; Đào tạo.
-          </p>
-        </div>
-      </footer>
+        </footer>
+      )}
     </div>
   );
 }

@@ -16,7 +16,11 @@ import {
   Send,
   HelpCircle,
   BarChart,
-  Sparkles
+  Sparkles,
+  Trophy,
+  PartyPopper,
+  Maximize2,
+  Minimize2
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Exam, Question, UserAnswer, Attempt } from '../types/math';
@@ -24,18 +28,26 @@ import { DIFFICULTY_LABELS, QUESTION_TYPE_LABELS } from '../data/mockData';
 import MathRenderer from './MathRenderer';
 import { gradeFullExam } from '../services/gradingService';
 import { storageService } from '../services/storageService';
+import { useAchievements } from '../context/AchievementContext';
 
 interface ExamViewProps {
   exams: Exam[];
   questions: Question[];
   onExamCompleted?: () => void;
+  isFocusMode?: boolean;
+  onToggleFocusMode?: (enabled: boolean) => void;
+  onExamActiveChange?: (isActive: boolean) => void;
 }
 
 export const ExamView: React.FC<ExamViewProps> = ({
   exams,
   questions,
   onExamCompleted,
+  isFocusMode = false,
+  onToggleFocusMode,
+  onExamActiveChange,
 }) => {
+  const { recordAnswer } = useAchievements();
   const [selectedExam, setSelectedExam] = useState<Exam | null>(null);
   const [selectedYearFilter, setSelectedYearFilter] = useState<'all' | number>('all');
   const [isExamActive, setIsExamActive] = useState<boolean>(false);
@@ -95,6 +107,18 @@ export const ExamView: React.FC<ExamViewProps> = ({
     };
   }, [isExamActive, isSubmitted]);
 
+  // Keyboard shortcut listener (Esc to exit focus mode)
+  useEffect(() => {
+    if (!isExamActive || isSubmitted) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFocusMode) {
+        onToggleFocusMode?.(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isExamActive, isSubmitted, isFocusMode, onToggleFocusMode]);
+
   // Timer interval
   useEffect(() => {
     let timer: any = null;
@@ -134,6 +158,7 @@ export const ExamView: React.FC<ExamViewProps> = ({
     setTimeSpentMap({});
     setSecondsRemaining((exam.duration || 90) * 60);
     setGradedResult(null);
+    onExamActiveChange?.(true);
   };
 
   const handleToggleFlag = (questionId: string) => {
@@ -174,6 +199,8 @@ export const ExamView: React.FC<ExamViewProps> = ({
     setShowSubmitConfirm(false);
     setIsExamActive(false);
     setIsSubmitted(true);
+    onToggleFocusMode?.(false);
+    onExamActiveChange?.(false);
 
     const result = gradeFullExam(examQuestions, userAnswersMap, timeSpentMap, flaggedMap);
     setGradedResult(result);
@@ -202,21 +229,75 @@ export const ExamView: React.FC<ExamViewProps> = ({
 
     storageService.saveAttempt(attemptRecord);
 
+    // Record answers to achievement progression
+    result.answers.forEach((ans) => {
+      recordAnswer(ans.isCorrect);
+    });
+
     if (onExamCompleted) {
       onExamCompleted();
     }
 
-    // Launch confetti on good results
-    if (result.totalScore >= 7.0) {
-      try {
+    // Launch confetti fireworks for high scores
+    triggerHighscoreConfetti(result.totalScore);
+  };
+
+  const triggerHighscoreConfetti = (score: number) => {
+    try {
+      if (score >= 8.0) {
+        // Grand Fireworks celebration for high scores (>= 8.0 / 10.0)
+        // 1. Initial burst
         confetti({
-          particleCount: 100,
-          spread: 70,
+          particleCount: 120,
+          spread: 80,
           origin: { y: 0.6 },
+          colors: ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#ffd700'],
         });
-      } catch (e) {
-        // Safe fallback
+
+        // 2. Realistic fireworks sequence over 2.5 seconds with left & right cannons
+        const end = Date.now() + 2.5 * 1000;
+        const interval: any = setInterval(() => {
+          if (Date.now() > end) {
+            return clearInterval(interval);
+          }
+
+          // Left cannon
+          confetti({
+            startVelocity: 35,
+            spread: 360,
+            ticks: 70,
+            particleCount: 40,
+            origin: {
+              x: Math.random() * 0.3 + 0.1,
+              y: Math.random() * 0.4 + 0.2,
+            },
+            colors: ['#f59e0b', '#ffd700', '#ec4899', '#8b5cf6', '#10b981'],
+          });
+
+          // Right cannon
+          confetti({
+            startVelocity: 35,
+            spread: 360,
+            ticks: 70,
+            particleCount: 40,
+            origin: {
+              x: Math.random() * 0.3 + 0.6,
+              y: Math.random() * 0.4 + 0.2,
+            },
+            colors: ['#3b82f6', '#6366f1', '#f43f5e', '#eab308', '#06b6d4'],
+          });
+        }, 300);
+      } else if (score >= 6.5) {
+        // Standard celebratory confetti burst
+        confetti({
+          particleCount: 80,
+          spread: 65,
+          origin: { y: 0.6 },
+          colors: ['#6366f1', '#3b82f6', '#10b981'],
+        });
       }
+    } catch (e) {
+      // Safe fallback
     }
   };
 
@@ -419,18 +500,74 @@ export const ExamView: React.FC<ExamViewProps> = ({
             </div>
           </div>
 
+          {/* High Score Confetti Celebration Banner */}
+          {gradedResult.totalScore >= 8.0 && (
+            <div className={`max-w-2xl mx-auto p-4 sm:p-5 rounded-2xl border text-left flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-in zoom-in-95 duration-300 ${
+              gradedResult.totalScore >= 9.0
+                ? 'bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-amber-500/15 border-amber-300 dark:border-amber-700/60 text-amber-950 dark:text-amber-100 shadow-sm shadow-amber-500/10'
+                : 'bg-gradient-to-r from-indigo-500/15 via-purple-500/10 to-indigo-500/15 border-indigo-200 dark:border-indigo-800/60 text-indigo-950 dark:text-indigo-100 shadow-sm shadow-indigo-500/10'
+            }`}>
+              <div className="flex items-center gap-3.5">
+                <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 shadow-xs ${
+                  gradedResult.totalScore >= 9.0
+                    ? 'bg-gradient-to-tr from-amber-500 to-yellow-400 text-slate-950 ring-2 ring-amber-300/50'
+                    : 'bg-gradient-to-tr from-indigo-600 to-purple-500 text-white ring-2 ring-indigo-300/50'
+                }`}>
+                  {gradedResult.totalScore >= 9.0 ? (
+                    <Trophy className="w-6 h-6 fill-slate-950/20" />
+                  ) : (
+                    <PartyPopper className="w-6 h-6" />
+                  )}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-extrabold text-sm sm:text-base">
+                      {gradedResult.totalScore >= 9.0 ? 'Thành Tích Thủ Khoa Xuất Sắc!' : 'Thành Tích Ấn Tượng - Điểm Giỏi!'}
+                    </h3>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-white/80 dark:bg-black/40 border border-current/20">
+                      {gradedResult.totalScore >= 9.0 ? 'Top 1% Toàn Quốc' : 'Đạt Chuẩn Điểm 8+'}
+                    </span>
+                  </div>
+                  <p className="text-xs opacity-90 mt-0.5">
+                    {gradedResult.totalScore >= 9.0
+                      ? 'Điểm số xuất sắc khẳng định năng lực làm chủ 100% dạng bài THPT Quốc Gia!'
+                      : 'Nền tảng kiến thức rất vững chắc và phản xạ giải đề chính xác!'}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => triggerHighscoreConfetti(gradedResult.totalScore)}
+                className={`shrink-0 px-4 py-2 rounded-xl text-xs font-black flex items-center gap-1.5 shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer ${
+                  gradedResult.totalScore >= 9.0
+                    ? 'bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 hover:brightness-105'
+                    : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:brightness-110'
+                }`}
+                title="Bắn pháo hoa ăn mừng"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Bắn pháo hoa 🎉</span>
+              </button>
+            </div>
+          )}
+
           {/* Action Buttons */}
           <div className="flex items-center justify-center gap-3 pt-2">
             <button
               onClick={() => handleStartExam(selectedExam)}
-              className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center gap-1.5"
+              className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
             >
               <RotateCcw className="w-4 h-4" />
               <span>Làm lại đề này</span>
             </button>
             <button
-              onClick={() => { setSelectedExam(null); setIsSubmitted(false); }}
-              className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors"
+              onClick={() => {
+                setSelectedExam(null);
+                setIsSubmitted(false);
+                onToggleFocusMode?.(false);
+                onExamActiveChange?.(false);
+              }}
+              className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors cursor-pointer"
             >
               Chọn đề thi khác
             </button>
@@ -530,30 +667,60 @@ export const ExamView: React.FC<ExamViewProps> = ({
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-4">
       
       {/* Live Exam Top Bar */}
-      <div className="sticky top-16 z-30 bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 shadow-sm p-4 flex items-center justify-between gap-4">
-        <div>
-          <h2 className="font-bold text-slate-900 text-sm sm:text-base leading-tight truncate max-w-xs sm:max-w-md">
-            {selectedExam?.title}
-          </h2>
-          <p className="text-xs text-slate-500">
-            Đã làm: <strong className="font-mono text-indigo-600">{answeredCount}</strong> / {examQuestions.length} câu
+      <div className={`sticky ${isFocusMode ? 'top-2 sm:top-3' : 'top-16'} z-30 bg-white/95 dark:bg-[#131d31]/95 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-3.5 sm:p-4 flex items-center justify-between gap-3 transition-all duration-300`}>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <h2 className="font-bold text-slate-900 dark:text-slate-100 text-sm sm:text-base leading-tight truncate max-w-xs sm:max-w-md">
+              {selectedExam?.title}
+            </h2>
+            {isFocusMode && (
+              <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 animate-pulse">
+                Focus Mode
+              </span>
+            )}
+          </div>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Đã làm: <strong className="font-mono text-indigo-600 dark:text-indigo-400">{answeredCount}</strong> / {examQuestions.length} câu
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          {/* Focus Mode Toggle Button */}
+          <button
+            onClick={() => onToggleFocusMode?.(!isFocusMode)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+              isFocusMode
+                ? 'bg-indigo-600 border-indigo-500 text-white shadow-xs hover:bg-indigo-700'
+                : 'bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300'
+            }`}
+            title={isFocusMode ? "Tắt Chế độ tập trung (hiện lại thanh điều hướng & chân trang - hoặc nhấn Esc)" : "Bật Chế độ tập trung (ẩn thanh điều hướng & chân trang để tập trung tuyệt đối)"}
+          >
+            {isFocusMode ? (
+              <>
+                <Minimize2 className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Thoát tập trung</span>
+              </>
+            ) : (
+              <>
+                <Maximize2 className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Chế độ tập trung</span>
+              </>
+            )}
+          </button>
+
           {/* Countdown Clock */}
-          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border font-mono font-bold text-sm ${
+          <div className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-xl border font-mono font-bold text-xs sm:text-sm ${
             secondsRemaining < 600
-              ? 'bg-rose-50 border-rose-300 text-rose-600 animate-pulse'
-              : 'bg-indigo-50 border-indigo-200 text-indigo-700'
+              ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800 text-rose-600 dark:text-rose-400 animate-pulse'
+              : 'bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300'
           }`}>
-            <Timer className="w-4 h-4" />
+            <Timer className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             <span>{formatTimer(secondsRemaining)}</span>
           </div>
 
           <button
             onClick={() => setShowSubmitConfirm(true)}
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center gap-1.5"
+            className="px-3.5 sm:px-4 py-1.5 sm:py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
           >
             <Send className="w-3.5 h-3.5" />
             <span>Nộp bài</span>
@@ -890,13 +1057,13 @@ export const ExamView: React.FC<ExamViewProps> = ({
             <div className="flex items-center justify-end gap-2.5 pt-2">
               <button
                 onClick={() => setShowSubmitConfirm(false)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200"
+                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200/80 transition-colors cursor-pointer"
               >
                 Tiếp tục làm bài
               </button>
               <button
                 onClick={handleSubmitExam}
-                className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-xs"
+                className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-xs transition-colors cursor-pointer"
               >
                 Nộp bài ngay
               </button>
