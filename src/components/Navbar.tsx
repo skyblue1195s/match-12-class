@@ -247,49 +247,64 @@ export const Navbar: React.FC<NavbarProps> = ({
               {showThemeMenu && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setShowThemeMenu(false)}></div>
-                  <div className={`absolute right-0 mt-2 w-64 rounded-2xl shadow-xl border p-2 z-50 transition-all ${
+                  <div className={`absolute right-0 mt-2.5 w-72 rounded-2xl shadow-2xl border p-3 z-50 transition-all ${
                     isDark 
-                      ? 'bg-[#11192b] border-slate-700 text-slate-200' 
+                      ? 'bg-[#11192b] border-slate-700/90 text-slate-200 shadow-indigo-950/50' 
                       : isPaper
-                      ? 'bg-white border-[#dcd4c3] text-zinc-800'
-                      : 'bg-white border-slate-200 text-slate-800'
+                      ? 'bg-[#fcfbf9] border-[#dcd4c3] text-zinc-800 shadow-stone-400/20'
+                      : 'bg-white border-slate-200/90 text-slate-800 shadow-slate-300/40'
                   }`}>
-                    <p className={`text-[10px] font-extrabold uppercase px-2 py-1 tracking-wider ${
-                      isDark ? 'text-slate-400' : 'text-slate-400'
-                    }`}>
-                      Chọn phong cách giao diện
-                    </p>
-                    <div className="space-y-1">
+                    {/* Section Header with balanced margin, padding and divider */}
+                    <div className="px-2 pt-1 pb-2.5 mb-2.5 border-b border-slate-200/70 dark:border-slate-800/80 flex items-center justify-between">
+                      <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                        Chọn phong cách giao diện
+                      </p>
+                      <span className="text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/80 px-2 py-0.5 rounded-md border border-indigo-100 dark:border-indigo-900/40">
+                        3 chủ đề
+                      </span>
+                    </div>
+
+                    {/* Theme Options with uniform gap & padding */}
+                    <div className="space-y-1.5">
                       {themes.map((t) => {
                         const isSelected = theme === t.id;
                         return (
                           <button
                             key={t.id}
+                            id={`btn-select-theme-${t.id}`}
                             onClick={() => {
                               setTheme(t.id);
                               setShowThemeMenu(false);
                             }}
-                            className={`w-full text-left px-2.5 py-2 rounded-xl text-xs font-bold transition-all flex items-start gap-2.5 cursor-pointer ${
+                            className={`w-full text-left p-2.5 rounded-xl text-xs font-bold transition-all flex items-start gap-3 cursor-pointer ${
                               isSelected
                                 ? isDark 
-                                  ? 'bg-indigo-600/30 text-indigo-300 border border-indigo-500/40'
-                                  : 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                                  ? 'bg-indigo-600/20 text-indigo-200 border border-indigo-500/50 shadow-2xs'
+                                  : isPaper
+                                  ? 'bg-amber-100/70 text-amber-900 border border-amber-300/90 shadow-2xs'
+                                  : 'bg-indigo-50 text-indigo-900 border border-indigo-200 shadow-2xs'
                                 : isDark
-                                ? 'hover:bg-slate-800 text-slate-300'
-                                : 'hover:bg-slate-50 text-slate-600'
+                                ? 'hover:bg-slate-800/80 text-slate-300 border border-transparent'
+                                : isPaper
+                                ? 'hover:bg-white text-zinc-700 border border-transparent'
+                                : 'hover:bg-slate-50 text-slate-700 border border-transparent'
                             }`}
                           >
-                            <div className="mt-0.5 shrink-0">{t.icon}</div>
-                            <div className="flex-1">
+                            <div className={`p-1.5 rounded-lg shrink-0 mt-0.5 ${
+                              isSelected 
+                                ? isDark ? 'bg-indigo-500/25 text-indigo-300' : 'bg-white shadow-2xs'
+                                : isDark ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'
+                            }`}>
+                              {t.icon}
+                            </div>
+                            <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between">
-                                <span>{t.label}</span>
+                                <span className="font-bold">{t.label}</span>
                                 {isSelected && (
-                                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+                                  <span className="w-2 h-2 rounded-full bg-indigo-500 dark:bg-indigo-400 shadow-xs animate-pulse"></span>
                                 )}
                               </div>
-                              <p className={`text-[10px] font-normal mt-0.5 ${
-                                isDark ? 'text-slate-400' : 'text-slate-400'
-                              }`}>
+                              <p className="text-[11px] font-normal leading-relaxed mt-0.5 opacity-80">
                                 {t.desc}
                               </p>
                             </div>
