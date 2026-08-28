@@ -1,0 +1,17 @@
+{
+  "name": "Toán 12 - Luyện tập & Thi thử THPT Quốc Gia",
+  "short_name": "Toán 12 THPT",
+  "description": "Nền tảng luyện thi và ôn tập Toán 12 theo chuẩn cấu trúc đề thi mới của Bộ GD&ĐT",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#090d16",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

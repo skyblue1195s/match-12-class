@@ -1,23 +1,50 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
   <defs>
-    <linearGradient id="mathGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#6366f1" />
-      <stop offset="50%" stop-color="#4f46e5" />
-      <stop offset="100%" stop-color="#4338ca" />
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="60%" stop-color="#4338ca" />
+      <stop offset="100%" stop-color="#312e81" />
     </linearGradient>
-    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+
+    <!-- Integral Glow Gradient -->
+    <linearGradient id="mathIntegral" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#38bdf8" />
       <stop offset="100%" stop-color="#818cf8" />
     </linearGradient>
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#4f46e5" flood-opacity="0.4" />
+
+    <!-- Text Glow Filter -->
+    <filter id="tabGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.35" />
     </filter>
   </defs>
-  <rect width="100" height="100" rx="24" fill="url(#mathGrad)" filter="url(#glow)"/>
-  <rect x="2" y="2" width="96" height="96" rx="22" stroke="white" stroke-opacity="0.15" stroke-width="2" fill="none"/>
+
+  <!-- Base Rounded Container -->
+  <rect width="128" height="128" rx="28" fill="url(#bgGrad)" />
   
-  <!-- Stylized Math Symbols: Integral and Sigma / Function -->
-  <path d="M36 28 C36 22 41 20 46 20 C49 20 51 22 51 24 C51 27 48 29 45 29 C42 29 41 31 41 35 L41 65 C41 72 36 78 28 78 C24 78 21 76 21 73 C21 70 24 68 27 68 C31 68 33 66 33 62 L33 36 C33 32 34 30 36 28 Z" fill="url(#accentGrad)"/>
-  <path d="M54 36 L76 36 L64 50 L78 64 L54 64 L66 50 Z" fill="#ffffff" fill-opacity="0.95"/>
-  <circle cx="75" cy="30" r="3.5" fill="#38bdf8" />
+  <!-- Subtle Inner Border for Contrast -->
+  <rect x="3" y="3" width="122" height="122" rx="25" stroke="#ffffff" stroke-opacity="0.22" stroke-width="2.5" fill="none" />
+
+  <!-- Math Decorative Background Grid Accent -->
+  <circle cx="98" cy="30" r="18" fill="#38bdf8" fill-opacity="0.1" />
+  <circle cx="28" cy="100" r="14" fill="#818cf8" fill-opacity="0.1" />
+
+  <!-- Stylized Integral Symbol (High Contrast) -->
+  <path d="M42 32 C42 22 49 18 56 18 C61 18 64 21 64 25 C64 29 60 32 55 32 C50 32 48 35 48 42 L48 84 C48 95 41 108 28 108 C22 108 18 105 18 100 C18 95 22 92 27 92 C33 92 36 88 36 80 L36 44 C36 38 38 34 42 32 Z" 
+        fill="url(#mathIntegral)" 
+        filter="url(#tabGlow)" />
+
+  <!-- '12' Typography in Bold Sans (Math 12) -->
+  <g filter="url(#tabGlow)">
+    <!-- Digit 1 -->
+    <path d="M68 46 L76 38 L86 38 L86 94 L74 94 L74 52 L68 56 Z" fill="#ffffff" />
+    <!-- Digit 2 -->
+    <path d="M93 54 C93 45 99 38 111 38 C122 38 128 45 128 53 C128 62 121 70 113 77 L98 90 L128 90 L128 100 L93 100 L93 91 L112 73 C116 69 119 64 119 57 C119 51 116 47 110 47 C104 47 101 51 100 56 Z" 
+          fill="#ffffff" 
+          transform="scale(0.9) translate(6, 4)" />
+  </g>
+
+  <!-- Accent Spark / Star on Top Right -->
+  <circle cx="106" cy="24" r="4.5" fill="#38bdf8" />
+  <circle cx="106" cy="24" r="2" fill="#ffffff" />
 </svg>
