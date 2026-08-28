@@ -5,11 +5,9 @@ import {
   BookMarked, 
   BarChart3, 
   Settings2, 
-  User, 
   Moon,
   Sun,
   Scroll,
-  Palette,
   ChevronDown
 } from 'lucide-react';
 import { UserProfile } from '../types/math';
@@ -31,18 +29,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   setActiveTab,
   theme,
   setTheme,
-  user,
-  setUser,
   mistakesCount,
-  onResetData,
 }) => {
   const [showThemeMenu, setShowThemeMenu] = useState(false);
-
-  const toggleRole = () => {
-    const newRole = user.role === 'student' ? 'admin' : 'student';
-    const updated = { ...user, role: newRole as 'student' | 'admin' };
-    setUser(updated);
-  };
 
   const themes: { id: AppTheme; label: string; icon: React.ReactNode; desc: string }[] = [
     { id: 'dark', label: 'Chống mỏi mắt (Dark Focus)', icon: <Moon className="w-4 h-4 text-indigo-400" />, desc: 'Nền than chì sâu, bảo vệ mắt học đêm' },
@@ -317,41 +306,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </div>
 
-            {/* Role switch */}
-            <button
-              id="btn-switch-role"
-              onClick={toggleRole}
-              title="Chuyển đổi chế độ Học sinh / Quản trị viên"
-              className={`px-2.5 py-1.5 text-xs font-bold rounded-xl border transition-colors hidden sm:flex items-center gap-1.5 cursor-pointer ${
-                isDark 
-                  ? 'border-slate-700/80 bg-[#131d31] hover:bg-[#1b2742] text-slate-300' 
-                  : isPaper 
-                  ? 'border-[#dcd4c3] bg-white hover:bg-[#fcfbf9] text-zinc-700' 
-                  : 'border-slate-200/80 bg-slate-50 hover:bg-slate-100 text-slate-700'
-              }`}
-            >
-              <User className={`w-3.5 h-3.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`} />
-              <span>{user.role === 'admin' ? 'Giáo viên' : 'Học sinh'}</span>
-            </button>
-
-            {/* User Profile Badge */}
-            <div className={`flex items-center gap-2 border rounded-2xl px-2.5 py-1.5 shadow-2xs ${
-              isDark 
-                ? 'bg-[#131d31] border-slate-700/80' 
-                : isPaper 
-                ? 'bg-white border-[#dcd4c3]' 
-                : 'bg-slate-50 border-slate-200/80'
-            }`}>
-              <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 text-white flex items-center justify-center font-bold text-xs shadow-2xs">
-                {user.name ? user.name.charAt(0).toUpperCase() : 'H'}
-              </div>
-              <div className="hidden lg:block text-left">
-                <p className={`text-xs font-bold leading-tight truncate max-w-[110px] ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
-                  {user.name}
-                </p>
-                <p className="text-[10px] text-indigo-400 font-bold">Mục tiêu: {user.targetScore || 9.0}đ</p>
-              </div>
-            </div>
           </div>
         </div>
 
