@@ -93,19 +93,6 @@ export const PracticeView: React.FC<PracticeViewProps> = ({
   const [showMatrixModal, setShowMatrixModal] = useState<boolean>(false);
   const [speedDrillOpen, setSpeedDrillOpen] = useState<boolean>(false);
 
-  // Question navigation strip ref
-  const questionNavRef = useRef<HTMLDivElement>(null);
-
-  // Auto-scroll active question button into view in the bottom pagination strip
-  useEffect(() => {
-    if (questionNavRef.current) {
-      const activeBtn = questionNavRef.current.querySelector(`[data-question-idx="${currentIndex}"]`) as HTMLElement;
-      if (activeBtn) {
-        activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-      }
-    }
-  }, [currentIndex]);
-
   // Filter questions for the selected topic and criteria
   const filteredQuestions = useMemo(() => {
     return questions.filter((q) => {
@@ -820,87 +807,48 @@ export const PracticeView: React.FC<PracticeViewProps> = ({
                 )}
               </div>
 
-              {/* Modern Responsive Question Navigator & Pagination Bar */}
-              <div className="px-4 sm:px-6 py-3.5 border-t border-slate-200/80 dark:border-slate-800 bg-slate-50/90 dark:bg-[#0c1424] flex flex-col sm:flex-row items-center justify-between gap-3">
-                
-                {/* Left: Previous Button & Matrix trigger on mobile */}
-                <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
-                  <button
-                    id="btn-prev-question"
-                    onClick={() => handleSelectQuestionIndex(Math.max(0, currentIndex - 1))}
-                    disabled={currentIndex === 0}
-                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 bg-slate-200/80 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 disabled:opacity-35 disabled:cursor-not-allowed shadow-2xs transition-all cursor-pointer"
-                    title="Câu trước (Phím mũi tên trái)"
-                  >
-                    <ArrowLeft className="w-3.5 h-3.5" />
-                    <span>Câu trước</span>
-                  </button>
+              {/* Navigation Controls Bar */}
+              <div className="px-4 sm:px-6 py-3.5 border-t border-slate-200/80 dark:border-slate-800 bg-slate-50/70 dark:bg-[#0c1424] flex items-center justify-between gap-3">
+                {/* Previous Button */}
+                <button
+                  id="btn-prev-question"
+                  onClick={() => handleSelectQuestionIndex(Math.max(0, currentIndex - 1))}
+                  disabled={currentIndex === 0}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 bg-slate-200/80 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 disabled:opacity-35 disabled:cursor-not-allowed shadow-2xs transition-all cursor-pointer"
+                  title="Câu trước (Phím mũi tên trái)"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Câu trước</span>
+                </button>
 
-                  {/* Quick Matrix Modal Button */}
+                {/* Center Question Index & Matrix trigger */}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold font-mono text-slate-700 dark:text-slate-300 bg-white/90 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-xl shadow-2xs">
+                    {currentIndex + 1} / {filteredQuestions.length}
+                  </span>
+
                   <button
                     id="btn-open-matrix"
                     onClick={() => setShowMatrixModal(true)}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/80 dark:hover:bg-indigo-900/80 border border-indigo-200 dark:border-indigo-800/80 text-indigo-700 dark:text-indigo-200 transition-all cursor-pointer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/80 dark:hover:bg-indigo-900/80 border border-indigo-200 dark:border-indigo-800/80 text-indigo-700 dark:text-indigo-200 transition-all cursor-pointer"
                     title="Mở bảng ma trận toàn bộ câu hỏi"
                   >
                     <LayoutGrid className="w-3.5 h-3.5" />
                     <span className="hidden sm:inline">Bảng câu hỏi</span>
-                    <span className="sm:hidden font-mono">({currentIndex + 1}/{filteredQuestions.length})</span>
                   </button>
                 </div>
 
-                {/* Middle: Horizontal Smooth Question Strip with Square Pills */}
-                <div 
-                  ref={questionNavRef}
-                  className="flex items-center gap-1.5 overflow-x-auto py-1 px-1 max-w-full sm:max-w-xs md:max-w-md lg:max-w-lg scrollbar-thin scroll-smooth"
+                {/* Next Button */}
+                <button
+                  id="btn-next-question"
+                  onClick={() => handleSelectQuestionIndex(Math.min(filteredQuestions.length - 1, currentIndex + 1))}
+                  disabled={currentIndex === filteredQuestions.length - 1}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-35 disabled:cursor-not-allowed shadow-xs transition-all cursor-pointer"
+                  title="Câu tiếp theo (Phím mũi tên phải)"
                 >
-                  {filteredQuestions.map((q, idx) => {
-                    const isActive = idx === currentIndex;
-                    const isSaved = storageService.getBookmarks().includes(q.id);
-                    const ansStatus = sessionAnsweredMap[q.id];
-
-                    let cellStyle = 'bg-slate-200/90 hover:bg-slate-300 text-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-100 border border-slate-300 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-400';
-
-                    if (isActive) {
-                      cellStyle = 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 ring-2 ring-indigo-400/50 scale-105 z-10';
-                    } else if (ansStatus) {
-                      if (ansStatus.isCorrect) {
-                        cellStyle = 'bg-emerald-100 dark:bg-emerald-950/60 border-emerald-400 text-emerald-800 dark:text-emerald-300 font-bold';
-                      } else {
-                        cellStyle = 'bg-rose-100 dark:bg-rose-950/60 border-rose-400 text-rose-800 dark:text-rose-300 font-bold';
-                      }
-                    }
-
-                    return (
-                      <button
-                        key={q.id}
-                        data-question-idx={idx}
-                        onClick={() => handleSelectQuestionIndex(idx)}
-                        className={`w-8 h-8 min-w-[32px] sm:w-9 sm:h-9 sm:min-w-[36px] aspect-square rounded-xl text-xs font-extrabold font-mono shrink-0 transition-all flex items-center justify-center relative cursor-pointer ${cellStyle}`}
-                        title={`Câu ${idx + 1} (${QUESTION_TYPE_LABELS[q.type]?.part || ''})`}
-                      >
-                        <span>{idx + 1}</span>
-                        {isSaved && (
-                          <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-amber-400 ring-1 ring-white"></span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Right: Next Button */}
-                <div className="w-full sm:w-auto flex justify-end">
-                  <button
-                    id="btn-next-question"
-                    onClick={() => handleSelectQuestionIndex(Math.min(filteredQuestions.length - 1, currentIndex + 1))}
-                    disabled={currentIndex === filteredQuestions.length - 1}
-                    className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-30 disabled:cursor-not-allowed shadow-xs transition-all cursor-pointer"
-                    title="Câu tiếp theo (Phím mũi tên phải)"
-                  >
-                    <span>Câu tiếp theo</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                  <span>Câu tiếp</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
               </div>
             </div>
           </div>

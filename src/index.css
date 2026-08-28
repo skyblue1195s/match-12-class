@@ -77,6 +77,41 @@
   background: rgba(148, 163, 184, 0.45);
 }
 
+/* Question Pagination Strip Scrollbar */
+.question-strip-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #a1a1aa rgba(226, 232, 240, 0.6);
+}
+.question-strip-scrollbar::-webkit-scrollbar {
+  height: 6px;
+}
+.question-strip-scrollbar::-webkit-scrollbar-track {
+  background: rgba(226, 232, 240, 0.6);
+  border-radius: 9999px;
+  margin: 0 4px;
+}
+.question-strip-scrollbar::-webkit-scrollbar-thumb {
+  background: #a1a1aa;
+  border-radius: 9999px;
+}
+.question-strip-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #71717a;
+}
+[data-theme="paper"] .question-strip-scrollbar::-webkit-scrollbar-track {
+  background: #e5ddca;
+}
+[data-theme="paper"] .question-strip-scrollbar::-webkit-scrollbar-thumb {
+  background: #a89f8b;
+}
+[data-theme="dark"] .question-strip-scrollbar::-webkit-scrollbar-track,
+[data-theme="midnight"] .question-strip-scrollbar::-webkit-scrollbar-track {
+  background: #18243c;
+}
+[data-theme="dark"] .question-strip-scrollbar::-webkit-scrollbar-thumb,
+[data-theme="midnight"] .question-strip-scrollbar::-webkit-scrollbar-thumb {
+  background: #33466d;
+}
+
 /* ========================================================================= */
 /* MIDNIGHT SLATE (DARK FOCUS) THEME RULES                                   */
 /* ========================================================================= */

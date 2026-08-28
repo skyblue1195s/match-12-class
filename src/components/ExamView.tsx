@@ -874,24 +874,24 @@ export const ExamView: React.FC<ExamViewProps> = ({
               )}
 
               {/* Navigation Controls */}
-              <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <div className="pt-4 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
                 <button
                   onClick={() => setCurrentExamIndex(Math.max(0, currentExamIndex - 1))}
                   disabled={currentExamIndex === 0}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-35"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-200 bg-[#eae3d2] hover:bg-[#ded5c0] dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-300/80 dark:border-slate-700 disabled:opacity-35 cursor-pointer shadow-2xs transition-all"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   <span>Câu trước</span>
                 </button>
 
-                <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
+                <span className="text-xs font-bold text-slate-700 dark:text-slate-300 bg-white/90 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-xl shadow-2xs font-mono">
                   {currentExamIndex + 1} / {examQuestions.length}
                 </span>
 
                 <button
                   onClick={() => setCurrentExamIndex(Math.min(examQuestions.length - 1, currentExamIndex + 1))}
                   disabled={currentExamIndex === examQuestions.length - 1}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-35 shadow-xs"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-35 shadow-xs cursor-pointer transition-all"
                 >
                   <span>Câu tiếp</span>
                   <ChevronRight className="w-4 h-4" />
