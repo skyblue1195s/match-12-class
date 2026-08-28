@@ -386,7 +386,7 @@ export const ExamView: React.FC<ExamViewProps> = ({
             <h1 className="text-2xl font-bold text-slate-900">
               Kết Quả Bài Thi Thử THPT Quốc Gia
             </h1>
-            <p className="text-xs text-slate-500 font-medium">{selectedExam.title}</p>
+            <p className="text-xs text-slate-500 font-medium">{selectedExam?.title || 'Đề thi THPT Quốc Gia'}</p>
           </div>
 
           {/* Big Score Box */}
@@ -396,7 +396,7 @@ export const ExamView: React.FC<ExamViewProps> = ({
               <span className="text-xl text-slate-400 font-normal"> / 10.0</span>
             </div>
             <p className="text-xs font-semibold text-slate-600 mt-2">
-              Thời gian làm bài: {formatTimer((selectedExam.duration * 60) - secondsRemaining)}
+              Thời gian làm bài: {formatTimer(((selectedExam?.duration || 90) * 60) - secondsRemaining)}
             </p>
           </div>
 

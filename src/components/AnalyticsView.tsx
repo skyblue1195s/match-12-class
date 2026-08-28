@@ -37,7 +37,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
   questions,
   user,
 }) => {
-  const { stats: userStats, masteryRank } = useAchievements();
+  const { stats: userStats, currentRank } = useAchievements();
   const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
   const [loadingAi, setLoadingAi] = useState<boolean>(false);
 
@@ -388,7 +388,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                 <span>Thành tựu &amp; Cấp độ</span>
               </h3>
               <span className="text-[11px] font-mono font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-lg border border-amber-200/80 dark:border-amber-800/50">
-                Lv.{userStats.masteryLevel} {masteryRank.title}
+                Lv.{userStats.masteryLevel} {currentRank?.title || 'Tập sự'}
               </span>
             </div>
 
@@ -410,7 +410,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   <span>Kỷ lục chuỗi</span>
                 </div>
                 <div className="text-xl font-black font-mono text-indigo-700 dark:text-indigo-300 mt-1">
-                  {userStats.bestStreak} <span className="text-xs font-normal">câu</span>
+                  {userStats.maxStreak} <span className="text-xs font-normal">câu</span>
                 </div>
               </div>
             </div>
@@ -420,13 +420,13 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               <div className="flex items-center justify-between text-xs">
                 <span className="font-bold text-slate-700 dark:text-slate-300">Huy hiệu đã mở khóa</span>
                 <span className="font-mono text-slate-400 text-[11px] font-bold">
-                  {userStats.unlockedBadges.length} / {ACHIEVEMENT_BADGES.length}
+                  {(userStats.unlockedBadgeIds || []).length} / {ACHIEVEMENT_BADGES.length}
                 </span>
               </div>
 
               <div className="grid grid-cols-2 gap-2">
                 {ACHIEVEMENT_BADGES.map((badge) => {
-                  const isUnlocked = userStats.unlockedBadges.includes(badge.id);
+                  const isUnlocked = (userStats.unlockedBadgeIds || []).includes(badge.id);
                   return (
                     <div
                       key={badge.id}
