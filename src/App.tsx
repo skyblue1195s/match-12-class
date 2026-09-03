@@ -1,16 +1,30 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Navbar from './components/Navbar';
 import PracticeView from './components/PracticeView';
+import TheoryView from './components/TheoryView';
 import ExamView from './components/ExamView';
 import MistakesView from './components/MistakesView';
 import AnalyticsView from './components/AnalyticsView';
 import AdminQuestionManager from './components/AdminQuestionManager';
+import AdSenseBanner from './components/AdSenseBanner';
 import { AchievementProvider } from './context/AchievementContext';
 import { AchievementNotification } from './components/AchievementNotification';
 import { storageService } from './services/storageService';
 import { Topic, Question, Exam, Attempt, UserProfile } from './types/math';
 
 export type AppTheme = 'dark' | 'paper' | 'light';
+
+const checkIsAdminParam = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  try {
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.get('isAdmin') === 'true') return true;
+    if (window.location.hash.includes('isAdmin=true')) return true;
+  } catch {
+    return false;
+  }
+  return false;
+};
 
 export default function App() {
   return (
@@ -21,7 +35,8 @@ export default function App() {
 }
 
 function MainApp() {
-  const [activeTab, setActiveTab] = useState<'practice' | 'exam' | 'mistakes' | 'analytics' | 'admin'>('practice');
+  const [isAdmin, setIsAdmin] = useState<boolean>(() => checkIsAdminParam());
+  const [activeTab, setActiveTab] = useState<'practice' | 'theory' | 'exam' | 'mistakes' | 'analytics' | 'admin'>('practice');
   const [theme, setTheme] = useState<AppTheme>(() => {
     return (localStorage.getItem('app_theme') as AppTheme) || 'dark';
   });
@@ -32,6 +47,38 @@ function MainApp() {
   const [attempts, setAttempts] = useState<Attempt[]>(() => storageService.getAttempts());
   const [mistakesCount, setMistakesCount] = useState<number>(() => Object.keys(storageService.getMistakes()).length);
   const [isFocusMode, setIsFocusMode] = useState<boolean>(false);
+  const [selectedGrade, setSelectedGrade] = useState<10 | 11 | 12>(() => {
+    const saved = localStorage.getItem('app_selected_grade');
+    if (saved === '10' || saved === '11' || saved === '12') {
+      return parseInt(saved, 10) as 10 | 11 | 12;
+    }
+    return 12;
+  });
+
+  const handleSelectGrade = (grade: 10 | 11 | 12) => {
+    setSelectedGrade(grade);
+    localStorage.setItem('app_selected_grade', grade.toString());
+  };
+
+  // Listen for URL changes (query params or hash) to update isAdmin
+  useEffect(() => {
+    const handleUrlChange = () => {
+      setIsAdmin(checkIsAdminParam());
+    };
+    window.addEventListener('popstate', handleUrlChange);
+    window.addEventListener('hashchange', handleUrlChange);
+    return () => {
+      window.removeEventListener('popstate', handleUrlChange);
+      window.removeEventListener('hashchange', handleUrlChange);
+    };
+  }, []);
+
+  // Safety fallback: if user is on admin tab but isAdmin is not true, revert to practice
+  useEffect(() => {
+    if (!isAdmin && activeTab === 'admin') {
+      setActiveTab('practice');
+    }
+  }, [isAdmin, activeTab]);
 
   // Reset focus mode if user switches away from exam tab
   useEffect(() => {
@@ -60,14 +107,14 @@ function MainApp() {
   // Sync SEO title based on current active tab
   useEffect(() => {
     const titles: Record<string, string> = {
-      practice: 'Toán 12 - Luyện tập Chuyên đề Chuẩn SGK & KaTeX',
+      practice: `Toán ${selectedGrade} - Luyện tập Chuyên đề Chuẩn GDPT 2018 & KaTeX`,
       exam: 'Phòng Thi thử THPT Quốc Gia Môn Toán 90 Phút (Cấu trúc mới)',
       mistakes: 'Sổ tay Câu hỏi Sai & Luyện tập Điểm yếu - Toán 12',
       analytics: 'Báo cáo Phân tích Phổ điểm & Năng lực Toán 12',
       admin: 'Hệ thống Quản trị Ngân hàng Câu hỏi & Đề thi Toán 12',
     };
-    document.title = titles[activeTab] || 'Toán 12 - Luyện tập & Thi thử THPT Quốc Gia (Cấu trúc mới 2025+)';
-  }, [activeTab]);
+    document.title = titles[activeTab] || `Toán ${selectedGrade} - Luyện tập & Thi thử THPT Quốc Gia (Cấu trúc mới 2025+)`;
+  }, [activeTab, selectedGrade]);
 
   // Sync state whenever actions happen
   const refreshData = useCallback(() => {
@@ -120,6 +167,9 @@ function MainApp() {
             setUser={handleUserUpdate}
             mistakesCount={mistakesCount}
             onResetData={handleResetData}
+            selectedGrade={selectedGrade}
+            onSelectGrade={handleSelectGrade}
+            isAdmin={isAdmin}
           />
         </div>
       )}
@@ -134,6 +184,19 @@ function MainApp() {
             topics={topics}
             questions={questions}
             onMistakeRecorded={refreshData}
+            selectedGrade={selectedGrade}
+            onSelectGrade={handleSelectGrade}
+          />
+        )}
+
+        {activeTab === 'theory' && (
+          <TheoryView
+            selectedGrade={selectedGrade}
+            onSelectGrade={handleSelectGrade}
+            onNavigateToPractice={(topicId, grade) => {
+              handleSelectGrade(grade);
+              setActiveTab('practice');
+            }}
           />
         )}
 
@@ -167,13 +230,20 @@ function MainApp() {
           />
         )}
 
-        {activeTab === 'admin' && (
+        {activeTab === 'admin' && isAdmin && (
           <AdminQuestionManager
             questions={questions}
             topics={topics}
             onQuestionsUpdated={refreshData}
             onResetSampleData={handleResetData}
           />
+        )}
+
+        {/* Google AdSense Placement Container */}
+        {!isFocusMode && (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+            <AdSenseBanner client="ca-pub-1887434028195350" format="auto" />
+          </div>
         )}
       </main>
 

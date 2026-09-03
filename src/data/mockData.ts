@@ -1,7 +1,7 @@
 import { Topic, Question, Exam } from '../types/math';
-import { ALL_10_TOPICS, ALL_10_TOPICS_QUESTIONS } from './topicsData';
+import { ALL_TOPICS, ALL_10_TOPICS, ALL_10_TOPICS_QUESTIONS } from './topicsData';
 
-export const INITIAL_TOPICS: Topic[] = ALL_10_TOPICS;
+export const INITIAL_TOPICS: Topic[] = ALL_TOPICS;
 
 export const INITIAL_QUESTIONS: Question[] = [
   ...ALL_10_TOPICS_QUESTIONS,

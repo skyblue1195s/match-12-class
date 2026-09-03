@@ -1,6 +1,6 @@
 {
   "name": "Toán 12 - Luyện thi & Ôn tập THPT",
-  "description": "Website luyện thi và thực hành Toán 12 theo cấu trúc mới THPT Quốc Gia với KaTeX, lời giải chi tiết và phân tích điểm số.",
+  "description": "Nền tảng học tập lý thuyết toàn diện từ cơ bản đến nâng cao (Lớp 10-11-12), dạng toán, mẹo Casio giải nhanh và luyện thi THPT Quốc Gia cấu trúc mới.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

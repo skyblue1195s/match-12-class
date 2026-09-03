@@ -42,14 +42,27 @@ interface PracticeViewProps {
   topics: Topic[];
   questions: Question[];
   onMistakeRecorded?: () => void;
+  selectedGrade?: 10 | 11 | 12;
+  onSelectGrade?: (grade: 10 | 11 | 12) => void;
 }
 
 export const PracticeView: React.FC<PracticeViewProps> = ({
   topics,
   questions,
   onMistakeRecorded,
+  selectedGrade = 12,
+  onSelectGrade,
 }) => {
-  const [selectedTopicId, setSelectedTopicId] = useState<string>(topics[0]?.id || 'topic-1-don-dieu-cuc-tri');
+  const activeGrade = selectedGrade || 12;
+
+  const gradeTopics = useMemo(() => {
+    return topics.filter(t => (t.grade || 12) === activeGrade);
+  }, [topics, activeGrade]);
+
+  const [selectedTopicId, setSelectedTopicId] = useState<string>(() => {
+    const initialForGrade = topics.filter(t => (t.grade || 12) === (selectedGrade || 12));
+    return initialForGrade[0]?.id || topics[0]?.id || 'topic-1-don-dieu-cuc-tri';
+  });
   const [selectedLevel, setSelectedLevel] = useState<string>('all');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -64,13 +77,19 @@ export const PracticeView: React.FC<PracticeViewProps> = ({
   // Achievement context
   const { recordAnswer, stats: achievementStats } = useAchievements();
 
-  // Ensure selected topic is valid when topics change
+  // Ensure selected topic is valid when grade or topics change
   React.useEffect(() => {
-    if (topics.length > 0 && !topics.some(t => t.id === selectedTopicId)) {
-      setSelectedTopicId(topics[0].id);
+    if (gradeTopics.length > 0 && !gradeTopics.some(t => t.id === selectedTopicId)) {
+      setSelectedTopicId(gradeTopics[0].id);
       setCurrentIndex(0);
+      setUserChoice(null);
+      setUserTfAnswers({ a: null, b: null, c: null, d: null });
+      setUserShortAnswer('');
+      setIsChecked(false);
+      setGradingResult(null);
+      setShowExplanation(false);
     }
-  }, [topics, selectedTopicId]);
+  }, [gradeTopics, selectedTopicId]);
 
   // User input states for current question
   const [userChoice, setUserChoice] = useState<string | null>(null);
@@ -274,14 +293,40 @@ export const PracticeView: React.FC<PracticeViewProps> = ({
       
       {/* Topics Carousel / Slider */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between flex-wrap gap-2">
-          <div className="flex items-center gap-3">
-            <h2 className="text-sm sm:text-base font-extrabold text-slate-900 flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
+            <h2 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+              <div className="w-6 h-6 rounded-lg bg-indigo-50 dark:bg-indigo-950/70 border border-indigo-100 dark:border-indigo-800/80 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
                 <BookOpen className="w-3.5 h-3.5" />
               </div>
-              <span>Chuyên đề Toán 12 Chuẩn SGK</span>
+              <span>Chuyên đề Toán {activeGrade} Chuẩn SGK</span>
             </h2>
+
+            {/* In-view Grade Switcher Pills */}
+            <div className="flex items-center bg-slate-100 dark:bg-slate-800/80 p-0.5 rounded-xl border border-slate-200/70 dark:border-slate-700/60">
+              {([12, 11, 10] as const).map((g) => {
+                const isCurrent = activeGrade === g;
+                return (
+                  <button
+                    key={g}
+                    id={`practice-grade-pill-${g}`}
+                    onClick={() => onSelectGrade && onSelectGrade(g)}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-extrabold transition-all cursor-pointer flex items-center gap-1 ${
+                      isCurrent
+                        ? 'bg-indigo-600 text-white shadow-xs'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <span>Lớp {g}</span>
+                    <span className={`text-[10px] px-1.5 py-0.2 rounded-md font-mono ${
+                      isCurrent ? 'bg-indigo-700 text-indigo-100' : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-300'
+                    }`}>
+                      {topics.filter(t => (t.grade || 12) === g).length} CĐ
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
 
             {/* Speed Drill Trigger Pill */}
             <button
@@ -296,8 +341,8 @@ export const PracticeView: React.FC<PracticeViewProps> = ({
           </div>
           
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-slate-500 bg-slate-100/80 px-2.5 py-1 rounded-full border border-slate-200/60 hidden sm:inline-block">
-              {topics.length} chuyên đề
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-100/80 dark:bg-slate-800/80 px-2.5 py-1 rounded-full border border-slate-200/60 dark:border-slate-700/60 hidden sm:inline-block">
+              {gradeTopics.length} chuyên đề Toán {activeGrade}
             </span>
             
             {/* Slider Nav Buttons */}
@@ -305,7 +350,7 @@ export const PracticeView: React.FC<PracticeViewProps> = ({
               <button
                 id="btn-slider-prev"
                 onClick={() => scrollSlider('left')}
-                className="w-8 h-8 rounded-xl border border-slate-200/80 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-700 hover:text-indigo-600 shadow-2xs transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-xl border border-slate-200/80 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-200 hover:text-indigo-600 shadow-2xs transition-colors cursor-pointer"
                 title="Chuyên đề trước"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -313,7 +358,7 @@ export const PracticeView: React.FC<PracticeViewProps> = ({
               <button
                 id="btn-slider-next"
                 onClick={() => scrollSlider('right')}
-                className="w-8 h-8 rounded-xl border border-slate-200/80 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-700 hover:text-indigo-600 shadow-2xs transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-xl border border-slate-200/80 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-200 hover:text-indigo-600 shadow-2xs transition-colors cursor-pointer"
                 title="Chuyên đề tiếp theo"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -327,39 +372,40 @@ export const PracticeView: React.FC<PracticeViewProps> = ({
           ref={sliderRef}
           className="flex items-stretch gap-3 overflow-x-auto pb-2 scroll-smooth scrollbar-thin snap-x snap-mandatory focus:outline-none"
         >
-          {topics.map((t) => {
+          {gradeTopics.map((t) => {
             const isSelected = t.id === selectedTopicId;
             const count = questions.filter(q => q.topicId === t.id).length;
             return (
               <button
                 key={t.id}
+                id={`btn-topic-${t.id}`}
                 onClick={() => handleTopicChange(t.id)}
                 className={`w-[240px] sm:w-[260px] shrink-0 snap-start p-4 rounded-2xl border text-left transition-all relative flex flex-col justify-between group cursor-pointer ${
                   isSelected
-                    ? 'border-indigo-600 bg-indigo-50/80 text-indigo-950 ring-2 ring-indigo-500/20 shadow-sm'
-                    : 'border-slate-200/80 bg-white hover:border-indigo-300 hover:bg-slate-50/60 shadow-2xs'
+                    ? 'border-indigo-600 bg-indigo-50/80 dark:bg-indigo-950/40 text-indigo-950 dark:text-indigo-200 ring-2 ring-indigo-500/20 shadow-sm'
+                    : 'border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#11192b] hover:border-indigo-300 dark:hover:border-indigo-700 hover:bg-slate-50/60 dark:hover:bg-slate-800/60 shadow-2xs'
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-lg font-mono ${
-                      isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-700'
+                      isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                     }`}>
-                      CĐ {t.order}
+                      T{activeGrade} • CĐ {t.order}
                     </span>
                     <span className="text-[11px] text-slate-400 font-bold font-mono">{count} câu</span>
                   </div>
                   <h3 className={`font-bold text-xs line-clamp-2 leading-snug transition-colors ${
-                    isSelected ? 'text-slate-900 font-extrabold' : 'text-slate-900 group-hover:text-indigo-600'
+                    isSelected ? 'text-slate-900 dark:text-white font-extrabold' : 'text-slate-900 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400'
                   }`}>
                     {t.name.replace(/^\d+\.\s*/, '')}
                   </h3>
                 </div>
-                <div className="mt-3 pt-2 border-t border-slate-100/80 flex items-center justify-between">
-                  <span className="text-[10px] font-semibold text-indigo-600 flex items-center gap-1">
+                <div className="mt-3 pt-2 border-t border-slate-100/80 dark:border-slate-800/80 flex items-center justify-between">
+                  <span className="text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 flex items-center gap-1">
                     {isSelected ? 'Đang chọn' : 'Luyện ngay'}
                   </span>
-                  <ArrowRight className={`w-3 h-3 transition-transform ${isSelected ? 'text-indigo-600 translate-x-0.5' : 'text-slate-300 group-hover:translate-x-0.5 group-hover:text-indigo-500'}`} />
+                  <ArrowRight className={`w-3 h-3 transition-transform ${isSelected ? 'text-indigo-600 dark:text-indigo-400 translate-x-0.5' : 'text-slate-300 dark:text-slate-600 group-hover:translate-x-0.5 group-hover:text-indigo-500'}`} />
                 </div>
               </button>
             );

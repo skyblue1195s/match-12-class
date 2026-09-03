@@ -153,10 +153,14 @@ export const storageService = {
       const data = localStorage.getItem(STORAGE_KEYS.TOPICS);
       if (data) {
         const parsed: Topic[] = JSON.parse(data);
-        if (Array.isArray(parsed) && parsed.length === INITIAL_TOPICS.length) {
-          const parsedIds = new Set(parsed.map(t => t.id));
-          const allMatch = INITIAL_TOPICS.every(t => parsedIds.has(t.id));
-          if (allMatch) return parsed;
+        if (Array.isArray(parsed) && parsed.length >= INITIAL_TOPICS.length) {
+          const parsedMap = new Map(parsed.map(t => [t.id, t]));
+          for (const initT of INITIAL_TOPICS) {
+            parsedMap.set(initT.id, { ...parsedMap.get(initT.id), ...initT });
+          }
+          const merged = Array.from(parsedMap.values());
+          this.saveTopics(merged);
+          return merged;
         }
       }
     } catch (e) {

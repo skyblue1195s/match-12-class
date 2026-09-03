@@ -1,28 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   BookOpen, 
+  GraduationCap,
   FileText, 
   BookMarked, 
   BarChart3, 
   Settings2, 
-  Moon,
-  Sun,
-  Scroll,
-  ChevronDown
+  Moon, 
+  Sun, 
+  Scroll, 
+  ChevronDown,
+  Check
 } from 'lucide-react';
 import { StreakMasteryPill } from './StreakMasteryPill';
 import { UserProfile } from '../types/math';
 import { AppTheme } from '../App';
 
 interface NavbarProps {
-  activeTab: 'practice' | 'exam' | 'mistakes' | 'analytics' | 'admin';
-  setActiveTab: (tab: 'practice' | 'exam' | 'mistakes' | 'analytics' | 'admin') => void;
+  activeTab: 'practice' | 'theory' | 'exam' | 'mistakes' | 'analytics' | 'admin';
+  setActiveTab: (tab: 'practice' | 'theory' | 'exam' | 'mistakes' | 'analytics' | 'admin') => void;
   theme: AppTheme;
   setTheme: (theme: AppTheme) => void;
   user: UserProfile;
   setUser: (user: UserProfile) => void;
   mistakesCount: number;
   onResetData: () => void;
+  selectedGrade?: 10 | 11 | 12;
+  onSelectGrade?: (grade: 10 | 11 | 12) => void;
+  isAdmin?: boolean;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -31,14 +36,62 @@ export const Navbar: React.FC<NavbarProps> = ({
   theme,
   setTheme,
   mistakesCount,
+  selectedGrade = 12,
+  onSelectGrade,
+  isAdmin = false,
 }) => {
   const [showThemeMenu, setShowThemeMenu] = useState(false);
+  const [showPracticeSubmenu, setShowPracticeSubmenu] = useState(false);
+  const practiceMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close practice submenu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (practiceMenuRef.current && !practiceMenuRef.current.contains(event.target as Node)) {
+        setShowPracticeSubmenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const themes: { id: AppTheme; label: string; icon: React.ReactNode; desc: string }[] = [
     { id: 'dark', label: 'Chống mỏi mắt (Dark Focus)', icon: <Moon className="w-4 h-4 text-indigo-400" />, desc: 'Nền than chì sâu, bảo vệ mắt học đêm' },
     { id: 'paper', label: 'Giấy thi Hàn lâm', icon: <Scroll className="w-4 h-4 text-amber-600" />, desc: 'Màu giấy in đề thi thật chuẩn Bộ GD' },
     { id: 'light', label: 'Sáng hiện đại', icon: <Sun className="w-4 h-4 text-amber-500" />, desc: 'Giao diện sáng sủa tương phản cao' },
   ];
+
+  const gradeOptions: { grade: 10 | 11 | 12; title: string; subtitle: string; badge: string; topicsCount: number }[] = [
+    {
+      grade: 12,
+      title: 'Toán 12',
+      subtitle: '10 Chuyên đề Trọng tâm Ôn thi Tốt nghiệp THPT 2025+',
+      badge: 'Trọng tâm',
+      topicsCount: 10,
+    },
+    {
+      grade: 11,
+      title: 'Toán 11',
+      subtitle: '8 Chuyên đề ĐS & HH: Lượng giác, Cấp số, Giới hạn, Đạo hàm, Không gian',
+      badge: 'Cơ bản & NC',
+      topicsCount: 8,
+    },
+    {
+      grade: 10,
+      title: 'Toán 10',
+      subtitle: '6 Chuyên đề ĐS & HH: Mệnh đề, BPT hai ẩn, Hàm bậc hai, Vectơ, Oxy, Tổ hợp',
+      badge: 'Nền tảng',
+      topicsCount: 6,
+    },
+  ];
+
+  const handleSelectGrade = (grade: 10 | 11 | 12) => {
+    if (onSelectGrade) {
+      onSelectGrade(grade);
+    }
+    setActiveTab('practice');
+    setShowPracticeSubmenu(false);
+  };
 
   const isDark = theme === 'dark';
   const isPaper = theme === 'paper';
@@ -65,7 +118,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <span className={`font-bold text-base sm:text-lg tracking-tight ${isDark ? 'text-white' : isPaper ? 'text-zinc-900' : 'text-slate-900'}`}>
-                  Toán 12 THPT
+                  Toán {selectedGrade} THPT
                 </span>
                 <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full border hidden sm:inline-flex items-center gap-1 ${
                   isDark 
@@ -92,11 +145,126 @@ export const Navbar: React.FC<NavbarProps> = ({
               ? 'bg-[#f0ece1] border-[#dcd4c3]' 
               : 'bg-slate-100/90 border-slate-200/60'
           }`}>
+            
+            {/* Practice Tab with Sub-Menu (Toán 10, 11, 12) */}
+            <div className="relative" ref={practiceMenuRef}>
+              <div className="flex items-center">
+                <button
+                  id="nav-tab-practice"
+                  onClick={() => {
+                    setActiveTab('practice');
+                    setShowPracticeSubmenu(prev => !prev);
+                  }}
+                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === 'practice'
+                      ? isDark 
+                        ? 'bg-indigo-600 text-white shadow-xs' 
+                        : isPaper
+                        ? 'bg-white text-amber-900 shadow-xs border border-[#dcd4c3]'
+                        : 'bg-white text-indigo-700 shadow-sm border border-slate-200/60'
+                      : isDark 
+                      ? 'text-slate-300 hover:text-white hover:bg-slate-800/60' 
+                      : isPaper 
+                      ? 'text-zinc-700 hover:text-zinc-900 hover:bg-white/50' 
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                  }`}
+                  title="Chọn chuyên đề Toán 10, 11 hoặc 12"
+                >
+                  <BookOpen className="w-3.5 h-3.5" />
+                  <span>Luyện chuyên đề</span>
+                  
+                  {/* Active Grade Tag */}
+                  <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded-md font-mono ${
+                    activeTab === 'practice'
+                      ? isDark ? 'bg-indigo-800 text-indigo-100' : isPaper ? 'bg-amber-100 text-amber-900' : 'bg-indigo-100 text-indigo-800'
+                      : isDark ? 'bg-slate-800 text-slate-300' : 'bg-slate-200/70 text-slate-700'
+                  }`}>
+                    T{selectedGrade}
+                  </span>
+
+                  <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${showPracticeSubmenu ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
+
+              {/* Sub-menu Dropdown Popup */}
+              {showPracticeSubmenu && (
+                <div className={`absolute left-0 mt-2 w-80 rounded-2xl shadow-2xl border p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150 ${
+                  isDark 
+                    ? 'bg-[#11192b] border-slate-700/90 text-slate-200 shadow-indigo-950/60' 
+                    : isPaper
+                    ? 'bg-[#fcfbf9] border-[#dcd4c3] text-zinc-800 shadow-stone-400/20'
+                    : 'bg-white border-slate-200/90 text-slate-800 shadow-slate-300/40'
+                }`}>
+                  <div className="px-3 py-2 border-b border-slate-200/60 dark:border-slate-800/80 mb-1 flex items-center justify-between">
+                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                      Chọn khối lớp luyện tập
+                    </span>
+                    <span className="text-[10px] text-indigo-500 font-bold">Chuẩn GDPT 2018</span>
+                  </div>
+
+                  <div className="space-y-1">
+                    {gradeOptions.map((opt) => {
+                      const isSelected = activeTab === 'practice' && selectedGrade === opt.grade;
+                      return (
+                        <button
+                          key={opt.grade}
+                          id={`submenu-grade-${opt.grade}`}
+                          onClick={() => handleSelectGrade(opt.grade)}
+                          className={`w-full text-left p-2.5 rounded-xl transition-all flex items-start gap-3 cursor-pointer group ${
+                            isSelected
+                              ? isDark 
+                                ? 'bg-indigo-600/25 text-indigo-200 border border-indigo-500/50' 
+                                : isPaper
+                                ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                                : 'bg-indigo-50 text-indigo-900 border border-indigo-200 shadow-2xs'
+                              : isDark
+                              ? 'hover:bg-slate-800/80 text-slate-300 border border-transparent'
+                              : isPaper
+                              ? 'hover:bg-amber-50/60 text-zinc-700 border border-transparent'
+                              : 'hover:bg-slate-50 text-slate-700 border border-transparent'
+                          }`}
+                        >
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 font-extrabold text-xs font-mono mt-0.5 ${
+                            isSelected
+                              ? 'bg-indigo-600 text-white'
+                              : isDark ? 'bg-slate-800 text-slate-300 group-hover:bg-indigo-900/50' : 'bg-slate-100 text-slate-700 group-hover:bg-indigo-50 group-hover:text-indigo-600'
+                          }`}>
+                            {opt.grade}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <span className="font-bold text-xs flex items-center gap-1.5">
+                                {opt.title}
+                                <span className={`text-[10px] font-semibold px-1.5 py-0.2 rounded-md ${
+                                  opt.grade === 12
+                                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                                    : 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
+                                }`}>
+                                  {opt.topicsCount} chuyên đề
+                                </span>
+                              </span>
+                              {isSelected && (
+                                <Check className="w-3.5 h-3.5 text-indigo-500" />
+                              )}
+                            </div>
+                            <p className="text-[11px] font-normal leading-tight opacity-75 mt-0.5 line-clamp-1">
+                              {opt.subtitle}
+                            </p>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Theory Tab */}
             <button
-              id="nav-tab-practice"
-              onClick={() => setActiveTab('practice')}
+              id="nav-tab-theory"
+              onClick={() => setActiveTab('theory')}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                activeTab === 'practice'
+                activeTab === 'theory'
                   ? isDark 
                     ? 'bg-indigo-600 text-white shadow-xs' 
                     : isPaper
@@ -108,9 +276,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                   ? 'text-zinc-700 hover:text-zinc-900 hover:bg-white/50' 
                   : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
               }`}
+              title="Lý thuyết & sổ tay công thức Toán 10-11-12 từ cơ bản đến nâng cao"
             >
-              <BookOpen className="w-3.5 h-3.5" />
-              <span>Luyện chuyên đề</span>
+              <GraduationCap className="w-3.5 h-3.5" />
+              <span>Lý thuyết</span>
             </button>
 
             <button
@@ -181,26 +350,28 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span>Thống kê tiến độ</span>
             </button>
 
-            <button
-              id="nav-tab-admin"
-              onClick={() => setActiveTab('admin')}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                activeTab === 'admin'
-                  ? isDark 
-                    ? 'bg-slate-700 text-white shadow-xs' 
-                    : isPaper
-                    ? 'bg-zinc-800 text-white shadow-xs'
-                    : 'bg-slate-900 text-white shadow-sm'
-                  : isDark 
-                  ? 'text-slate-300 hover:text-white hover:bg-slate-800/60' 
-                  : isPaper 
-                  ? 'text-zinc-700 hover:text-zinc-900 hover:bg-white/50' 
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
-              }`}
-            >
-              <Settings2 className="w-3.5 h-3.5" />
-              <span>Ngân hàng</span>
-            </button>
+            {isAdmin && (
+              <button
+                id="nav-tab-admin"
+                onClick={() => setActiveTab('admin')}
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === 'admin'
+                    ? isDark 
+                      ? 'bg-slate-700 text-white shadow-xs' 
+                      : isPaper
+                      ? 'bg-zinc-800 text-white shadow-xs'
+                      : 'bg-slate-900 text-white shadow-sm'
+                    : isDark 
+                    ? 'text-slate-300 hover:text-white hover:bg-slate-800/60' 
+                    : isPaper 
+                    ? 'text-zinc-700 hover:text-zinc-900 hover:bg-white/50' 
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                }`}
+              >
+                <Settings2 className="w-3.5 h-3.5" />
+                <span>Ngân hàng</span>
+              </button>
+            )}
           </nav>
 
           {/* User Profile, Theme Switcher & Role */}
@@ -314,9 +485,26 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* Mobile Navigation Tabs Bar */}
-        <div className={`flex md:hidden overflow-x-auto py-2.5 gap-1.5 border-t scrollbar-none ${
+        <div className={`flex md:hidden overflow-x-auto py-2.5 gap-1.5 border-t scrollbar-none items-center ${
           isDark ? 'border-slate-800' : isPaper ? 'border-[#dcd4c3]' : 'border-slate-100'
         }`}>
+          {/* Mobile Grade Quick switcher */}
+          <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 p-0.5 rounded-xl shrink-0">
+            {([10, 11, 12] as const).map((g) => (
+              <button
+                key={g}
+                onClick={() => handleSelectGrade(g)}
+                className={`px-2 py-1 rounded-lg text-[11px] font-extrabold font-mono transition-all ${
+                  activeTab === 'practice' && selectedGrade === g
+                    ? 'bg-indigo-600 text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
+                }`}
+              >
+                T{g}
+              </button>
+            ))}
+          </div>
+
           <button
             onClick={() => setActiveTab('practice')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 ${
@@ -326,6 +514,16 @@ export const Navbar: React.FC<NavbarProps> = ({
             }`}
           >
             <BookOpen className="w-3.5 h-3.5" /> Luyện tập
+          </button>
+          <button
+            onClick={() => setActiveTab('theory')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 ${
+              activeTab === 'theory' 
+                ? 'bg-indigo-600 text-white shadow-xs' 
+                : isDark ? 'text-slate-300 bg-slate-800/80' : 'text-slate-600 bg-slate-100'
+            }`}
+          >
+            <GraduationCap className="w-3.5 h-3.5" /> Lý thuyết
           </button>
           <button
             onClick={() => setActiveTab('exam')}
@@ -357,16 +555,18 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <BarChart3 className="w-3.5 h-3.5" /> Thống kê
           </button>
-          <button
-            onClick={() => setActiveTab('admin')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 ${
-              activeTab === 'admin' 
-                ? 'bg-slate-700 text-white shadow-xs' 
-                : isDark ? 'text-slate-300 bg-slate-800/80' : 'text-slate-600 bg-slate-100'
-            }`}
-          >
-            <Settings2 className="w-3.5 h-3.5" /> Ngân hàng
-          </button>
+          {isAdmin && (
+            <button
+              onClick={() => setActiveTab('admin')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 ${
+                activeTab === 'admin' 
+                  ? 'bg-slate-700 text-white shadow-xs' 
+                  : isDark ? 'text-slate-300 bg-slate-800/80' : 'text-slate-600 bg-slate-100'
+              }`}
+            >
+              <Settings2 className="w-3.5 h-3.5" /> Ngân hàng
+            </button>
+          )}
         </div>
       </div>
     </header>
@@ -374,4 +574,3 @@ export const Navbar: React.FC<NavbarProps> = ({
 };
 
 export default Navbar;
-

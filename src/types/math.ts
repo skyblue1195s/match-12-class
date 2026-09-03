@@ -9,6 +9,7 @@ export interface Topic {
   order: number;
   description: string;
   icon?: string;
+  grade?: 10 | 11 | 12;
   totalQuestions?: number;
 }
 
