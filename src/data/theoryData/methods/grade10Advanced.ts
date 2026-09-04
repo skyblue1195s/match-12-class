@@ -72,7 +72,7 @@ export const GRADE_10_ADVANCED: Record<string, AdvancedInsight[]> = {
         },
         {
           title: 'Cosin góc giữa hai vectơ',
-          latex: '\\cos(\\vec{u}, \\vec{v}) = \\dfrac{\\vec{u} \\cdot \\vec{v}}{|\\vec{u}| \\cdot |\\vec{v}| = \\dfrac{x_1 x_2 + y_1 y_2}{\\sqrt{x_1^2+y_1^2}\\sqrt{x_2^2+y_2^2}}',
+          latex: '\\cos(\\vec{u}, \\vec{v}) = \\dfrac{\\vec{u} \\cdot \\vec{v}}{|\\vec{u}| \\cdot |\\vec{v}|} = \\dfrac{x_1 x_2 + y_1 y_2}{\\sqrt{x_1^2+y_1^2} \\cdot \\sqrt{x_2^2+y_2^2}}',
           description: 'Góc giữa hai vectơ có thể là góc tù (cos < 0), không giống như góc giữa hai đường thẳng (luôn >= 0).',
         },
       ],

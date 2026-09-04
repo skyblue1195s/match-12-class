@@ -346,7 +346,9 @@ $$\\vec{u} \\cdot \\vec{v} = |\\vec{u}| \\cdot |\\vec{v}| \\cdot \\cos(\\vec{u},
         formulas: [
           {
             title: 'Cosin góc giữa hai vectơ',
-            latex: '\\cos(\\vec{u}, \\vec{v}) = \\dfrac{\\vec{u} \\cdot \\vec{v}}{|\\vec{u}| \\cdot |\\vec{v}|}',
+            latex: '\\cos(\\vec{u}, \\vec{v}) = \\dfrac{\\vec{u} \\cdot \\vec{v}}{|\\vec{u}| \\cdot |\\vec{v}|} = \\dfrac{x_1 x_2 + y_1 y_2}{\\sqrt{x_1^2 + y_1^2} \\cdot \\sqrt{x_2^2 + y_2^2}}',
+            description: 'Tỉ số giữa tích vô hướng và tích hai độ dài của hai vectơ (-1 <= cos <= 1).',
+            note: 'Góc giữa hai vectơ có thể là góc tù (cos < 0). Phân biệt với góc giữa hai đường thẳng (luôn >= 0).'
           },
         ],
       },
@@ -514,6 +516,12 @@ $$\\cos(\\Delta_1, \\Delta_2) = \\dfrac{|A_1A_2 + B_1B_2|}{\\sqrt{A_1^2 + B_1^2}
           {
             title: 'Khoảng cách từ một điểm đến đường thẳng',
             latex: 'd(M_0, \\Delta) = \\dfrac{|Ax_0 + By_0 + C|}{\\sqrt{A^2 + B^2}}',
+          },
+          {
+            title: 'Cosin góc giữa hai đường thẳng trong Oxy',
+            latex: '\\cos(\\Delta_1, \\Delta_2) = \\dfrac{|\\vec{n}_1 \\cdot \\vec{n}_2|}{|\\vec{n}_1| \\cdot |\\vec{n}_2|} = \\dfrac{|A_1 A_2 + B_1 B_2|}{\\sqrt{A_1^2 + B_1^2} \\cdot \\sqrt{A_2^2 + B_2^2}}',
+            description: 'Góc giữa hai đường thẳng luôn là góc nhọn hoặc vuông: 0° <= (Δ1, Δ2) <= 90° (tử số có dấu trị tuyệt đối).',
+            note: 'Phân biệt với cosin góc giữa hai vectơ: \\cos(\\vec{u}, \\vec{v}) = \\dfrac{x_1x_2 + y_1y_2}{\\sqrt{x_1^2+y_1^2}\\sqrt{x_2^2+y_2^2}} (KHÔNG có trị tuyệt đối, có thể âm nếu góc tù).'
           },
         ],
       },

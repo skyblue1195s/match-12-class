@@ -390,6 +390,12 @@ const RAW_GRADE_12_THEORIES: TopicTheory[] = [
             title: 'Tọa độ trung điểm & Trọng tâm',
             latex: 'M\\left(\\dfrac{x_A+x_B}{2}; \\dfrac{y_A+y_B}{2}; \\dfrac{z_A+z_B}{2}\\right), \\quad G\\left(\\dfrac{x_A+x_B+x_C}{3}; \\dfrac{y_A+y_B+y_C}{3}; \\dfrac{z_A+z_B+z_C}{3}\\right)',
           },
+          {
+            title: 'Cosin góc giữa hai vectơ trong không gian Oxyz',
+            latex: '\\cos(\\vec{u}, \\vec{v}) = \\dfrac{\\vec{u} \\cdot \\vec{v}}{|\\vec{u}| \\cdot |\\vec{v}|} = \\dfrac{x_1x_2 + y_1y_2 + z_1z_2}{\\sqrt{x_1^2+y_1^2+z_1^2} \\cdot \\sqrt{x_2^2+y_2^2+z_2^2}}',
+            description: 'Tỉ số giữa tích vô hướng và tích hai độ dài của hai vectơ. Giá trị thuộc đoạn [-1; 1].',
+            note: 'Góc giữa hai vectơ có thể tù (cos < 0). Phân biệt với góc giữa hai đường thẳng luôn nhọn hoặc vuông (cos >= 0).'
+          },
         ],
       },
       {

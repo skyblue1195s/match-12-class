@@ -98,6 +98,12 @@ export const GRADE_12_ADVANCED: Record<string, AdvancedInsight[]> = {
       description: 'Tận dụng tối đa bộ tính năng Vector của máy tính cầm tay fx-580VN X để không bao giờ phải tính tay tích có hướng:',
       quickFormulas: [
         {
+          title: 'Cosin góc giữa hai vectơ trong không gian Oxyz',
+          latex: '\\cos(\\vec{u}, \\vec{v}) = \\dfrac{\\vec{u} \\cdot \\vec{v}}{|\\vec{u}| \\cdot |\\vec{v}|} = \\dfrac{x_1 x_2 + y_1 y_2 + z_1 z_2}{\\sqrt{x_1^2+y_1^2+z_1^2} \\cdot \\sqrt{x_2^2+y_2^2+z_2^2}}',
+          description: 'Góc giữa hai vectơ có thể tù (cos < 0). Phân biệt với góc giữa hai đường thẳng (luôn >= 0).',
+          note: '\\vec{u} \\perp \\vec{v} \\iff \\vec{u} \\cdot \\vec{v} = 0 \\iff x_1 x_2 + y_1 y_2 + z_1 z_2 = 0.',
+        },
+        {
           title: 'Công thức thể tích khối hộp Oxyz',
           latex: 'V_{\\text{hộp}} = |[\\vec{u}, \\vec{v}] \\cdot \\vec{w}|',
           description: 'Thể tích khối hộp bằng tích hỗn tạp của 3 vectơ cạnh xuất phát từ một đỉnh.',

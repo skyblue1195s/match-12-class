@@ -167,7 +167,12 @@ export const TheoryView: React.FC<TheoryViewProps> = ({
       t.summary.toLowerCase().includes(q) ||
       t.chapter.toLowerCase().includes(q) ||
       t.coreSections.some(s => s.content.toLowerCase().includes(q) || s.formulas.some(f => f.title.toLowerCase().includes(q) || f.latex.toLowerCase().includes(q))) ||
-      t.methods.some(m => m.title.toLowerCase().includes(q))
+      t.methods.some(m => m.title.toLowerCase().includes(q)) ||
+      (t.advancedInsights && t.advancedInsights.some(a => 
+        a.title.toLowerCase().includes(q) || 
+        a.description.toLowerCase().includes(q) ||
+        (a.quickFormulas && a.quickFormulas.some(f => f.title.toLowerCase().includes(q) || f.latex.toLowerCase().includes(q)))
+      ))
     );
   }, [gradeTheories, searchQuery]);
 
@@ -781,6 +786,62 @@ export const TheoryView: React.FC<TheoryViewProps> = ({
                     <div className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
                       <MathRenderer content={insight.description} />
                     </div>
+
+                    {/* Quick Formulas & Key Insights */}
+                    {insight.quickFormulas && insight.quickFormulas.length > 0 && (
+                      <div className="space-y-3 pt-2">
+                        <h4 className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                          <Zap className="w-3.5 h-3.5 text-amber-500" />
+                          Công thức giải nhanh & Bí kíp 8.5+:
+                        </h4>
+                        <div className="grid grid-cols-1 gap-3">
+                          {insight.quickFormulas.map((qf, qfIdx) => (
+                            <div
+                              key={`qf-${qfIdx}`}
+                              className="bg-amber-50/40 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-800/40 rounded-xl p-3.5 space-y-2"
+                            >
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs font-bold text-amber-900 dark:text-amber-300 flex items-center gap-1.5">
+                                  <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                                  {qf.title}
+                                </span>
+                                <button
+                                  onClick={() => copyFormulaLatex(qf.latex, `qf-${aIdx}-${qfIdx}`)}
+                                  className="text-[10px] text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 flex items-center gap-1 transition-colors cursor-pointer"
+                                >
+                                  {copiedFormulaIndex === `qf-${aIdx}-${qfIdx}` ? (
+                                    <>
+                                      <Check className="w-3 h-3 text-emerald-500" />
+                                      <span className="text-emerald-500 font-bold">Đã chép</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Copy className="w-3 h-3" />
+                                      <span>Copy</span>
+                                    </>
+                                  )}
+                                </button>
+                              </div>
+
+                              <div className="bg-white dark:bg-[#0d1527] py-2.5 px-3 rounded-lg border border-amber-200/50 dark:border-amber-800/40 text-center overflow-x-auto">
+                                <MathRenderer content={`$$${qf.latex}$$`} />
+                              </div>
+
+                              {qf.description && (
+                                <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                                  {qf.description}
+                                </p>
+                              )}
+                              {qf.note && (
+                                <div className="text-[11px] text-amber-800 dark:text-amber-300 font-medium bg-amber-100/60 dark:bg-amber-900/30 p-2 rounded-lg">
+                                  💡 <strong>Lưu ý:</strong> {qf.note}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     {insight.tips && insight.tips.length > 0 && (
                       <div className="space-y-2 pt-1">
